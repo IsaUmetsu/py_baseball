@@ -14,6 +14,9 @@ from config import getConfig
 from driver import getChromeDriver, getFirefoxDriver
 from util import Util
 
+def commonWait():
+    time.sleep(2)
+
 # driver生成
 driver = getFirefoxDriver()
 util = Util(driver)
@@ -24,7 +27,7 @@ targetDate = datetime.datetime.strptime(getConfig("seasonStart"), "%Y/%m/%d")
 while 1:
     # 指定日の[日程・結果]画面へ遷移
     driver.get(getConfig("scheduleUrl").replace("[date]", targetDate.strftime("%Y-%m-%d")))
-    time.sleep(2)
+    commonWait()
 
     for gameCnt in range(len(util.getElems("gameCards"))):
         # 日付ディレクトリ作成
@@ -40,17 +43,21 @@ while 1:
 
         #「一球速報」に遷移
         driver.get(getConfig("gameScoreUrl").replace("[dateGameNo]", pathDate + gameNo))
+        # メインコンテンツ
+        contentMain = driver.find_element_by_css_selector("#contentMain")
         # 1回表に遷移
         selectorTopOf1 = "#ing_brd tbody tr td:nth-child(2)"
-        driver.find_element_by_css_selector(selectorTopOf1).click()
-        time.sleep(2)
-
+        contentMain.find_element_by_css_selector(selectorTopOf1).click()
+        commonWait()
+        # ユーティリティ再定義
+        util = Util(contentMain)
         scene = 0
 
         try:
             while 1:
                 data = {}
                 scene += 1
+                startTime = time.time()
 
                 # ------------ ライブヘッダ ------------
                 data["liveHeader"] = {
@@ -81,7 +88,7 @@ while 1:
                 if liveBody["battingResult"] == "試合終了" or liveBody["battingResult"] == "試合中止" or liveBody["battingResult"] == "試合前":
                     data["liveBody"] = liveBody
                     # save as json
-                    with open(fullGamePath + '/' + str(scene) + '.json', 'w') as f:
+                    with open("{0}/{1}.json".format(fullGamePath, scene), 'w') as f:
                         json.dump(data, f, indent=2, ensure_ascii=False)
                     break
                 
@@ -219,23 +226,33 @@ while 1:
                 data["awayTeamInfo"] = createTeamInfo("awayTeamElemId")
 
                 # save as json
-                with open(fullGamePath + '/' + str(scene) + '.json', 'w') as f:
+                with open("{0}/{1}.json".format(fullGamePath, scene), 'w') as f:
                     json.dump(data, f, indent=2, ensure_ascii=False)
 
-                argList = [
-                    "gameNo: " + gameNo,
-                    "scene: " + str(scene),
-                    data["liveHeader"]["inning"],
-                    str(data["liveHeader"]["count"]["o"]) + "アウト"
-                ]
-                print("----- finshed: " + " ".join(argList) + " -----")
+                print("----- done: "\
+                    "date: {0}, "
+                    "gameNo: {1}, "\
+                    "scene: {2:3d}, "\
+                    "inning: {3}, "\
+                    "{4}アウト, "\
+                    "{5:3.1f}[sec]"\
+                    " -----".format(
+                        pathDate,
+                        gameNo,
+                        scene,
+                        data["liveHeader"]["inning"],
+                        data["liveHeader"]["count"]["o"],
+                        time.time() - startTime
+                    )
+                )
 
                 #「次へ」ボタン押下
                 selectorNextButton = "#replay .next a"
-                driver.find_element_by_css_selector(selectorNextButton).click()
-                time.sleep(3)
+                contentMain.find_element_by_css_selector(selectorNextButton).click()
+                commonWait()
 
         except TimeoutException as te:
             print(te)
 
     targetDate = targetDate + datetime.timedelta(days=1)
+    util = Util(driver)
