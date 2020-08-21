@@ -23,8 +23,9 @@ util = Util(driver)
 
 # シーズン開始日設定
 targetDate = datetime.datetime.strptime(getConfig("seasonStart"), "%Y/%m/%d")
+dateEnd = datetime.datetime.strptime(getConfig("dateEnd"), "%Y/%m/%d")
 
-while 1:
+while targetDate <= dateEnd:
     # 指定日の[日程・結果]画面へ遷移
     driver.get(getConfig("scheduleUrl").replace("[date]", targetDate.strftime("%Y-%m-%d")))
     commonWait()
