@@ -44,6 +44,7 @@ while targetDate <= dateEnd:
 
         #「一球速報」に遷移
         driver.get(getConfig("gameScoreUrl").replace("[dateGameNo]", pathDate + gameNo))
+        commonWait()
         # メインコンテンツ
         contentMain = driver.find_element_by_css_selector("#contentMain")
         # 1回表に遷移
