@@ -10,7 +10,7 @@ from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchElementException
 
 from selector import getSelector
-from config import getConfig
+from config import getConfig, getHawksGameInfo
 from driver import getChromeDriver, getFirefoxDriver
 from util import Util
 
@@ -20,10 +20,11 @@ def commonWait():
 # driver生成
 driver = getFirefoxDriver()
 util = Util(driver)
-
 # シーズン開始日設定
 targetDate = datetime.datetime.strptime(getConfig("seasonStart"), "%Y/%m/%d")
 dateEnd = datetime.datetime.strptime(getConfig("dateEnd"), "%Y/%m/%d")
+# ホークス戦情報取得
+hawksGameInfo = getHawksGameInfo()
 
 while targetDate <= dateEnd:
     # 指定日の[日程・結果]画面へ遷移
@@ -36,6 +37,11 @@ while targetDate <= dateEnd:
         fullPathDate = "/".join([getConfig("pathBase"), pathDate])
         if not os.path.exists(fullPathDate):
             os.mkdir(fullPathDate)
+
+        # 取得済みのホークス戦はスキップ
+        if hawksGameInfo[pathDate] == (gameCnt + 1):
+            continue;
+
         # ゲームディレクトリ作成
         gameNo = "0" + str(gameCnt + 1)
         fullGamePath = "/".join([getConfig("pathBase"), pathDate, gameNo])
