@@ -1,15 +1,17 @@
 def getConfig(key):
     config = {
-        "seasonStart": "2020/07/21",
-        "dateEnd": "2020/07/22",
         "scheduleUrl": "https://baseball.yahoo.co.jp/npb/schedule/?date=[date]",
         "gameScoreUrl": "https://baseball.yahoo.co.jp/npb/game/[dateGameNo]/score",
         "pathBase": "/Users/IsamuUmetsu/dev/py_baseball/output",
     }
     return config[key]
 
+# 061901
+# 070905
+
 def getHawksGameInfo():
     return {
+        "20200709": 6,
         "20200718": 6,
         "20200719": 6,
         "20200721": 6,
@@ -18,6 +20,7 @@ def getHawksGameInfo():
         "20200724": 6,
         "20200725": 6,
         "20200726": 6,
+        "20200727": -1,
         "20200728": 6,
         "20200729": 6,
         "20200730": 6,
@@ -30,6 +33,7 @@ def getHawksGameInfo():
         "20200807": 5,
         "20200808": 5,
         "20200809": 5,
+        "20200810": -1,
         "20200811": 5,
         "20200812": 6,
         "20200813": 4,
@@ -42,4 +46,13 @@ def getHawksGameInfo():
         "20200821": 5,
         "20200822": 5,
         "20200823": 5,
+        "20200824": -1,
+        "20200825": 6,
+        "20200826": -1,
+        "20200827": -1,
+        "20200828": -1,
+        "20200829": -1,
+        "20200830": -1,
+        "20200831": -1,
+        "20200901": -1,
     }

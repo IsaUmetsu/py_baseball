@@ -5,6 +5,7 @@ from collections import OrderedDict
 import pprint
 import datetime
 import os
+import argparse
 
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchElementException
@@ -14,6 +15,13 @@ from config import getConfig, getHawksGameInfo
 from driver import getChromeDriver, getFirefoxDriver
 from util import Util
 
+parser = argparse.ArgumentParser(prog="blowser", add_help=True)
+parser.add_argument('-ss', '--season-start', type=str, default=datetime.datetime.now().strftime("%m%d"))
+parser.add_argument('-se', '--season-end', type=str, default=datetime.datetime.now().strftime("%m%d"))
+parser.add_argument('-s', '--specify', nargs='+', type=int)
+parser.add_argument('-e', '--exclude', nargs='+', type=int)
+args = parser.parse_args()
+
 def commonWait():
     time.sleep(2)
 
@@ -21,8 +29,8 @@ def commonWait():
 driver = getFirefoxDriver()
 util = Util(driver)
 # シーズン開始日設定
-targetDate = datetime.datetime.strptime(getConfig("seasonStart"), "%Y/%m/%d")
-dateEnd = datetime.datetime.strptime(getConfig("dateEnd"), "%Y/%m/%d")
+targetDate = datetime.datetime.strptime("2020" + args.season_start, "%Y%m%d")
+dateEnd = datetime.datetime.strptime("2020" + args.season_end, "%Y%m%d")
 # ホークス戦情報取得
 hawksGameInfo = getHawksGameInfo()
 
@@ -39,8 +47,18 @@ while targetDate <= dateEnd:
             os.mkdir(fullPathDate)
 
         # 取得済みのホークス戦はスキップ
-        if hawksGameInfo[pathDate] == (gameCnt + 1):
-            continue;
+        # if hawksGameInfo[pathDate] == (gameCnt + 1):
+        #     continue;
+
+        # 特定試合 指定時
+        if args.specify:
+            if (gameCnt + 1) not in args.specify:
+                continue
+
+        # 特定試合 除外時
+        if args.exclude:
+            if (gameCnt + 1) in args.exclude:
+                continue
 
         # ゲームディレクトリ作成
         gameNo = "0" + str(gameCnt + 1)
