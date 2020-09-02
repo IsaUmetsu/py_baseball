@@ -24,6 +24,9 @@ util = Util(driver)
 hawksGameInfo = getHawksGameInfo()
 
 for gameDate, gameCnt in hawksGameInfo.items():
+    # 試合がない日はスキップ
+    if gameCnt == -1:
+        continue;
 
     # シーズン開始日設定
     targetDate = datetime.datetime.strptime("{0}".format(gameDate), "%Y%m%d")
