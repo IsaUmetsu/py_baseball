@@ -6,9 +6,6 @@ def getConfig(key):
     }
     return config[key]
 
-# 061901
-# 070905
-
 def getHawksGameInfo():
     return {
         "20200709": 6,
