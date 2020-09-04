@@ -38,6 +38,8 @@ dateEnd = datetime.datetime.strptime("2020" + args.season_end, "%Y%m%d")
 # ホークス戦情報取得
 hawksGameInfo = getHawksGameInfo()
 
+print("----- current time: {0} -----".format(datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S")))
+
 while targetDate <= dateEnd:
     # 指定日の[日程・結果]画面へ遷移
     driver.get(getConfig("scheduleUrl").replace("[date]", targetDate.strftime("%Y-%m-%d")))
