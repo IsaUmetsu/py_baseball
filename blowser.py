@@ -25,6 +25,10 @@ args = parser.parse_args()
 def commonWait():
     time.sleep(2)
 
+def getInningSelector(inning, topBtm):
+    topBtmDic = { "表": 1, "裏": 2 }
+    return getSelector("inningBase").format(topBtmDic[topBtm], inning + 1)
+
 # driver生成
 driver = getFirefoxDriver()
 util = Util(driver)
@@ -71,13 +75,62 @@ while targetDate <= dateEnd:
         commonWait()
         # メインコンテンツ
         contentMain = driver.find_element_by_css_selector("#contentMain")
-        # 1回表に遷移
-        selectorTopOf1 = "#ing_brd tbody tr td:nth-child(2)"
-        contentMain.find_element_by_css_selector(selectorTopOf1).click()
-        commonWait()
-        # ユーティリティ再定義
+
+        # ユーティリティ再定義 (対象セレクタを限定させる (driver → contentMain))
         util = Util(contentMain)
-        scene = 0
+        # 一球速報 初期遷移時のイニング
+        currentInningTopBtm = util.getText("inning")
+        print("----- game: {0}, currentInningTopBtm: {1} -----".format(gameNo, currentInningTopBtm))
+
+        # 取得対象(開始) 初期値設定
+        fromInning = 1
+        fromTopBtm = "表"
+        # 取得対象(終了) 初期値設定
+        toInning = 0
+        toTopBtm = ""
+        # ファイル一覧を取得 (隠しファイルは削除)
+        files = os.listdir(fullGamePath)
+        if '.DS_Store' in files:
+            files.remove('.DS_Store')
+        fileCount = len(files)
+
+        # 初期遷移時が 試合終了、試合中止、試合前 以外の場合
+        if currentInningTopBtm not in ["試合終了", "試合中止", "試合前"]:
+            # 取得対象(終了) のイニング決定
+            currentInning, currentTopBtm = currentInningTopBtm.split("回")
+            toInning = int(currentInning)
+            toTopBtm = currentTopBtm
+
+        # 過去に保存済みの場合
+        if fileCount > 0:
+            # 取得対象(開始) のイニング決定
+            jsonOpen = open("{0}/{1}.json".format(fullGamePath, fileCount))
+            loadedJson = json.load(jsonOpen)
+            # 保存済みの最新イニング
+            savedLatestInningTopBtm = loadedJson["liveHeader"]["inning"]
+            print("----- game: {0}, savedLatestInningTopBtm: {1} -----".format(gameNo, savedLatestInningTopBtm))
+            # 試合終了まで取得済みの場合、保存対象外
+            if savedLatestInningTopBtm in ["試合終了", "試合中止"]:
+                continue
+            # 試合途中まで取得済みの場合
+            else:
+                currentInning, currentTopBtm = savedLatestInningTopBtm.split("回")
+                fromInning = int(currentInning)
+                # 
+                if currentTopBtm == "表":
+                    # 2回表〜9回表の場合は「裏」にする
+                    fromTopBtm = "裏"
+                # 2回裏〜9回裏の場合は、1つイニングを進めて「表」にする
+                elif currentTopBtm == "裏":
+                    fromInning = fromInning + 1
+                    fromTopBtm = "表"
+
+        # 指定のイニングに遷移
+        selectorInning = getInningSelector(fromInning, fromTopBtm)
+        contentMain.find_element_by_css_selector(selectorInning).click()
+        commonWait()
+        # 処理開始シーン定義
+        scene = fileCount
 
         try:
             while 1:
@@ -110,14 +163,21 @@ while targetDate <= dateEnd:
                 liveBody["battingResult"] = util.getText("battingResult")
                 liveBody["pitchingResult"] = util.getText("pitchingResult")
 
-                # 
-                if liveBody["battingResult"] == "試合終了" or liveBody["battingResult"] == "試合中止" or liveBody["battingResult"] == "試合前":
+                # 取得対象が存在しない場合、保存して終了
+                if liveBody["battingResult"] in ["試合終了", "試合中止", "試合前"]:
                     data["liveBody"] = liveBody
                     # save as json
                     with open("{0}/{1}.json".format(fullGamePath, scene), 'w') as f:
                         json.dump(data, f, indent=2, ensure_ascii=False)
                     break
-                
+
+                # 取得対象(終了) が存在する場合
+                if toInning > 0 and len(toTopBtm) > 0:
+                    # 取得対象範囲を超えた場合、保存せず終了
+                    currentInning, currentTopBtm = data["liveHeader"]["inning"].split("回")
+                    if int(currentInning) == toInning and currentTopBtm == toTopBtm:
+                        break;
+
                 # 塁状況
                 onbaseInfoElem = util.getElems("onbaseInfo")
                 onbaseInfo = []
@@ -255,7 +315,7 @@ while targetDate <= dateEnd:
                 with open("{0}/{1}.json".format(fullGamePath, scene), 'w') as f:
                     json.dump(data, f, indent=2, ensure_ascii=False)
 
-                print("----- done: "\
+                print("----- [done] "\
                     "date: {0}, "
                     "gameNo: {1}, "\
                     "scene: {2:3d}, "\

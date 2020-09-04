@@ -5,6 +5,7 @@ selectorList = {
 
     ### 一球速報
     ## イニング
+    "inningBase": "#ing_brd tbody tr:nth-child({0}) td:nth-child({1})",
     "topOf1": "#ing_brd tbody tr td:nth-child(2)",
 
     ## 速報詳細
