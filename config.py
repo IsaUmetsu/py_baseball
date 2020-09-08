@@ -3,8 +3,26 @@ def getConfig(key):
         "scheduleUrl": "https://baseball.yahoo.co.jp/npb/schedule/?date=[date]",
         "gameScoreUrl": "https://baseball.yahoo.co.jp/npb/game/[dateGameNo]/score",
         "pathBase": "/Users/IsamuUmetsu/dev/py_baseball/output",
+        "pathBaseCards": "/Users/IsamuUmetsu/dev/py_baseball/cards",
     }
     return config[key]
+
+def getTeamInitial(team):
+    teamInitial = {
+        "ＤｅＮＡ": "De",
+        "阪神": "T",
+        "巨人": "G",
+        "中日": "D",
+        "広島": "C",
+        "ヤクルト": "S",
+        "楽天": "E",
+        "ソフトバンク": "H",
+        "西武": "L",
+        "オリックス": "B",
+        "ロッテ": "M",
+        "日本ハム": "F"
+    }
+    return teamInitial[team]
 
 def getHawksGameInfo():
     return {
