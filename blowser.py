@@ -134,6 +134,29 @@ while targetDate <= dateEnd:
         selectorInning = getInningSelector(fromInning, fromTopBtm)
         contentMain.find_element_by_css_selector(selectorInning).click()
         commonWait()
+
+        # 取得対象(開始) 1回裏以降の場合
+        if fromInning > 1 or fromTopBtm == "裏":
+            #「戻る」ボタン押下
+            selectorPrevButton = "#replay .back a"
+            contentMain.find_element_by_css_selector(selectorPrevButton).click()
+            commonWait()
+            while 1:
+                # 現在の打者数
+                currentBatterCnt = util.getText("inningBatterCnt")
+                # 投手変更、守備変更がない場合
+                if len(currentBatterCnt) > 0:
+                    #「次へ」ボタン押下
+                    selectorNextButton = "#replay .next a"
+                    contentMain.find_element_by_css_selector(selectorNextButton).click()
+                    commonWait()
+                    # シート変更の初期シーンに移動したら抜ける
+                    break
+                # 依然シートの変更がある場合は「戻る」ボタン押下
+                else:
+                    contentMain.find_element_by_css_selector(selectorPrevButton).click()
+                    commonWait()   
+
         # 処理開始シーン定義
         scene = fileCount
 
