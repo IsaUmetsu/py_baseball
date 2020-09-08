@@ -27,7 +27,6 @@ def commonWait():
 
 # driver生成
 driver = getFirefoxDriver()
-util = Util(driver)
 # シーズン開始日設定
 targetDate = datetime.datetime.strptime("2020" + args.season_start, "%Y%m%d")
 dateEnd = datetime.datetime.strptime("2020" + args.season_end, "%Y%m%d")
@@ -35,6 +34,7 @@ dateEnd = datetime.datetime.strptime("2020" + args.season_end, "%Y%m%d")
 print("----- current time: {0} -----".format(datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S")))
 
 while targetDate <= dateEnd:
+    util = Util(driver)
     # 指定日の[日程・結果]画面へ遷移
     driver.get(getConfig("scheduleUrl").replace("[date]", targetDate.strftime("%Y-%m-%d")))
     commonWait()
