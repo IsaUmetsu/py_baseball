@@ -100,7 +100,7 @@ while targetDate <= dateEnd:
         if currentInningTopBtm in ["試合前"]:
             continue
         # 初期遷移時が 試合終了、試合中止、試合前 以外の場合
-        if currentInningTopBtm not in ["試合終了", "試合中止"]:
+        if currentInningTopBtm not in ["試合終了", "試合中止", "ノーゲーム"]:
             # 取得対象(終了) のイニング決定
             currentInning, currentTopBtm = currentInningTopBtm.split("回")
             toInning = int(currentInning)
@@ -115,7 +115,7 @@ while targetDate <= dateEnd:
             savedLatestInningTopBtm = loadedJson["liveHeader"]["inning"]
             print("----- game: {0}, savedLatestInningTopBtm: {1} -----".format(gameNo, savedLatestInningTopBtm))
             # 試合終了まで取得済みの場合、保存対象外
-            if savedLatestInningTopBtm in ["試合終了", "試合中止", "試合前"]:
+            if savedLatestInningTopBtm in ["試合終了", "試合中止", "試合前", "ノーゲーム"]:
                 continue
             # 試合途中まで取得済みの場合
             else:
