@@ -31,6 +31,7 @@ selectorList = {
     "currentBatterPlayerNo": "#liveBody .bottom #batter .nm_box .nm span",
     "currentBatterDomainHand": "#liveBody .bottom #batter .dominantHand",
     "currentBatterRate": "#liveBody .bottom #batter .rate",
+    "currentBatterPrevResult": "#liveBody .bottom #batter .anda",
     # 登板投手概要
     "currentPitcherName": "#liveBody .bottom #pit .nm_box .nm a",
     "currentPitcherPlayerNo": "#liveBody .bottom #pit .nm_box .nm span",

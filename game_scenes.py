@@ -222,7 +222,8 @@ while targetDate <= dateEnd:
                     "name": util.getText("currentBatterName"),
                     "playerNo": util.getText("currentBatterPlayerNo"),
                     "domainHand": util.getText("currentBatterDomainHand"),
-                    "average": util.getText("currentBatterRate")
+                    "average": util.getText("currentBatterRate"),
+                    "prevResult": util.getText("currentBatterPrevResult"),
                 }
                 # 登板投手概要
                 liveBody["currentPicherInfo"] = {
