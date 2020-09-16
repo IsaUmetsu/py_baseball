@@ -2,8 +2,10 @@ def getConfig(key):
     config = {
         "scheduleUrl": "https://baseball.yahoo.co.jp/npb/schedule/?date=[date]",
         "gameScoreUrl": "https://baseball.yahoo.co.jp/npb/game/[dateGameNo]/score",
+        "gameTopUrl": "https://baseball.yahoo.co.jp/npb/game/[dateGameNo]/top",
         "pathBase": "/Users/IsamuUmetsu/dev/py_baseball/output",
         "pathBaseCards": "/Users/IsamuUmetsu/dev/py_baseball/cards",
+        "pathBasePitcher": "/Users/IsamuUmetsu/dev/py_baseball/pitcher",
     }
     return config[key]
 
