@@ -46,7 +46,7 @@ while targetDate <= dateEnd:
 
         # 日付ディレクトリ作成
         pathDate = targetDate.strftime("%Y%m%d")
-        fullPathDate = "/".join([getConfig("pathBasePitcher"), pathDate])
+        fullPathDate = "/".join([getConfig("pathBaseStarter"), pathDate])
         if not os.path.exists(fullPathDate):
             os.mkdir(fullPathDate)
 
@@ -75,8 +75,8 @@ while targetDate <= dateEnd:
         awayStartPitcher = util.getText("awayStartPitcher")
         homeStartPitcher = util.getText("homeStartPitcher")
 
-        awayInfo = { "team": away, "picher": awayStartPitcher }
-        homeInfo = { "team": home, "picher": homeStartPitcher }
+        awayInfo = { "team": away, "pitcher": awayStartPitcher }
+        homeInfo = { "team": home, "pitcher": homeStartPitcher }
 
         data = { "away": awayInfo, "home": homeInfo }
         # save as json
@@ -96,3 +96,6 @@ while targetDate <= dateEnd:
         )
 
     targetDate = targetDate + datetime.timedelta(days=1)
+
+driver.close()
+driver.quit()

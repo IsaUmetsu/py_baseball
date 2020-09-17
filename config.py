@@ -5,7 +5,7 @@ def getConfig(key):
         "gameTopUrl": "https://baseball.yahoo.co.jp/npb/game/[dateGameNo]/top",
         "pathBase": "/Users/IsamuUmetsu/dev/py_baseball/output",
         "pathBaseCards": "/Users/IsamuUmetsu/dev/py_baseball/cards",
-        "pathBasePitcher": "/Users/IsamuUmetsu/dev/py_baseball/pitcher",
+        "pathBaseStarter": "/Users/IsamuUmetsu/dev/py_baseball/starter",
     }
     return config[key]
 

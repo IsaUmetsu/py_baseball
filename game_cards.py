@@ -85,3 +85,6 @@ while targetDate <= dateEnd:
         )
 
     targetDate = targetDate + datetime.timedelta(days=1)
+
+driver.close()
+driver.quit()

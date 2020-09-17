@@ -371,3 +371,6 @@ while targetDate <= dateEnd:
 
     targetDate = targetDate + datetime.timedelta(days=1)
     util = Util(driver)
+
+driver.close()
+driver.quit()
