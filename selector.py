@@ -16,6 +16,12 @@ selectorList = {
     "inningBase": "#ing_brd tbody tr:nth-child({0}) td:nth-child({1})",
     "topOf1": "#ing_brd tbody tr td:nth-child(2)",
 
+    ### 出場成績
+    "awayTeamFullName": "#gm_stats .bb-modCommon01:nth-child(2) .bb-modCommon02:nth-child(2) header",
+    "awayPitchStats": "#gm_stats .bb-modCommon01:nth-child(2) .bb-modCommon02:nth-child(2) table tbody tr",
+    "homeTeamFullName": "#gm_stats .bb-modCommon01:nth-child(2) .bb-modCommon02:nth-child(3) header",
+    "homePitchStats": "#gm_stats .bb-modCommon01:nth-child(2) .bb-modCommon02:nth-child(3) table tbody tr",
+
     ## 速報詳細
     ## ライブヘッダ
     "inning": "#async-fieldBso .live em",

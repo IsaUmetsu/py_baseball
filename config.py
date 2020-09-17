@@ -3,9 +3,11 @@ def getConfig(key):
         "scheduleUrl": "https://baseball.yahoo.co.jp/npb/schedule/?date=[date]",
         "gameScoreUrl": "https://baseball.yahoo.co.jp/npb/game/[dateGameNo]/score",
         "gameTopUrl": "https://baseball.yahoo.co.jp/npb/game/[dateGameNo]/top",
+        "gameStatsUrl": "https://baseball.yahoo.co.jp/npb/game/[dateGameNo]/stats",
         "pathBase": "/Users/IsamuUmetsu/dev/py_baseball/output",
         "pathBaseCards": "/Users/IsamuUmetsu/dev/py_baseball/cards",
         "pathBaseStarter": "/Users/IsamuUmetsu/dev/py_baseball/starter",
+        "pathPitcherStats": "/Users/IsamuUmetsu/dev/py_baseball/pitcherStats",
     }
     return config[key]
 
@@ -23,6 +25,23 @@ def getTeamInitial(team):
         "オリックス": "B",
         "ロッテ": "M",
         "日本ハム": "F"
+    }
+    return teamInitial[team]
+
+def getTeamInitialByFullName(team):
+    teamInitial = {
+        "横浜ＤｅＮＡベイスターズ": "De",
+        "阪神タイガース": "T",
+        "読売ジャイアンツ": "G",
+        "中日ドラゴンズ": "D",
+        "広島東洋カープ": "C",
+        "東京ヤクルトスワローズ": "S",
+        "東北楽天ゴールデンイーグルス": "E",
+        "福岡ソフトバンクホークス": "H",
+        "埼玉西武ライオンズ": "L",
+        "オリックス・バファローズ": "B",
+        "千葉ロッテマリーンズ": "M",
+        "北海道日本ハムファイターズ": "F"
     }
     return teamInitial[team]
 
