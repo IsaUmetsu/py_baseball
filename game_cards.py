@@ -17,7 +17,7 @@ from util import Util
 
 parser = argparse.ArgumentParser(prog="blowser", add_help=True)
 parser.add_argument('-ss', '--season-start', type=str, default=datetime.datetime.now().strftime("%m%d"))
-parser.add_argument('-se', '--season-end', type=str, default=datetime.datetime.now().strftime("%m%d"))
+parser.add_argument('-se', '--season-end', type=str, default=(datetime.datetime.now() + datetime.timedelta(days=1)).strftime("%m%d"))
 parser.add_argument('-s', '--specify', nargs='+', type=int)
 parser.add_argument('-e', '--exclude', nargs='+', type=int)
 args = parser.parse_args()
@@ -88,3 +88,4 @@ while targetDate <= dateEnd:
 
 driver.close()
 driver.quit()
+print("----- finished time: {0} -----\n\n".format(datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S")))

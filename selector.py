@@ -6,9 +6,9 @@ selectorList = {
     "gameCardsHomeTeam": ".bb-score__team p:nth-child(2)",
 
     ### トップ
-    "awayTeam": "#strt_pit .bb-splits__item:nth-child(1) .bb-splitsHead h1",
+    "awayTeam": "#gm_recen .bb-gameCard__readMore .bb-gameCard__readMoreItem:nth-child(1) span",
+    "homeTeam": "#gm_recen .bb-gameCard__readMore .bb-gameCard__readMoreItem:nth-child(2) span",
     "awayStartPitcher": "#strt_pit .bb-splits__item:nth-child(1) header h1 a",
-    "homeTeam": "#strt_pit .bb-splits__item:nth-child(2) .bb-splitsHead h1",
     "homeStartPitcher": "#strt_pit .bb-splits__item:nth-child(2) header h1 a",
 
     ### 一球速報

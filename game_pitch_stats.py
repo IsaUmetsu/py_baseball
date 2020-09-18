@@ -124,3 +124,4 @@ while targetDate <= dateEnd:
 
 driver.close()
 driver.quit()
+print("----- finished time: {0} -----\n\n".format(datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S")))

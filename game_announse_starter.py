@@ -17,7 +17,7 @@ from util import Util
 
 parser = argparse.ArgumentParser(prog="blowser", add_help=True)
 parser.add_argument('-ss', '--season-start', type=str, default=datetime.datetime.now().strftime("%m%d"))
-parser.add_argument('-se', '--season-end', type=str, default=datetime.datetime.now().strftime("%m%d"))
+parser.add_argument('-se', '--season-end', type=str, default=(datetime.datetime.now() + datetime.timedelta(days=1)).strftime("%m%d"))
 parser.add_argument('-s', '--specify', nargs='+', type=int)
 parser.add_argument('-e', '--exclude', nargs='+', type=int)
 args = parser.parse_args()
@@ -67,35 +67,31 @@ while targetDate <= dateEnd:
         driver.get(getConfig("gameTopUrl").replace("[dateGameNo]", targetDate.strftime("%Y%m%d") + gameNo))
         commonWait()
 
-        contentMain = driver.find_element_by_css_selector("#strt_pit")
-
-        util = Util(contentMain)
+        util = Util(driver.find_element_by_css_selector("#gm_recen"))
         away = getTeamInitial(util.getText("awayTeam"))
         home = getTeamInitial(util.getText("homeTeam"))
-        awayStartPitcher = util.getText("awayStartPitcher")
-        homeStartPitcher = util.getText("homeStartPitcher")
 
-        awayInfo = { "team": away, "pitcher": awayStartPitcher }
-        homeInfo = { "team": home, "pitcher": homeStartPitcher }
+        try:
+            contentMain = driver.find_element_by_css_selector("#strt_pit")
 
-        data = { "away": awayInfo, "home": homeInfo }
-        # save as json
-        with open("{0}/{1}.json".format(fullPathDate, gameNo), 'w') as f:
-            json.dump(data, f, indent=2, ensure_ascii=False)
-        
-        print("----- [done] "\
-            "date: {0}, "
-            "gameNo: {1}, "\
-            "{2} vs {3} "\
-            " -----".format(
-                pathDate,
-                gameNo,
-                away,
-                home
-            )
-        )
+            util = Util(contentMain)
+            awayStartPitcher = util.getText("awayStartPitcher")
+            homeStartPitcher = util.getText("homeStartPitcher")
+
+            awayInfo = { "team": away, "pitcher": awayStartPitcher }
+            homeInfo = { "team": home, "pitcher": homeStartPitcher }
+
+            data = { "away": awayInfo, "home": homeInfo }
+            # save as json
+            with open("{0}/{1}.json".format(fullPathDate, gameNo), 'w') as f:
+                json.dump(data, f, indent=2, ensure_ascii=False)
+            
+            print("----- [done] date: {0}, gameNo: {1}, {2} vs {3} -----".format(pathDate, gameNo, away, home))
+        except NoSuchElementException as e:
+            print("----- [Not announced yet] date: {0}, gameNo: {1}, {2} vs {3}  -----".format(pathDate, gameNo, away, home))
 
     targetDate = targetDate + datetime.timedelta(days=1)
 
 driver.close()
 driver.quit()
+print("----- finished time: {0} -----\n\n".format(datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S")))
