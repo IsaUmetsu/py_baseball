@@ -47,7 +47,8 @@ def createPitchStats(pitchStatusElem):
     pitchStats = []
     for pitchStat in pitchStatusElem:
         rows = pitchStat.find_elements_by_css_selector("tr td")
-        pitchStats.append(createPitchStatsDetail(rows))
+        if len(rows) == 14:
+            pitchStats.append(createPitchStatsDetail(rows))
     return pitchStats
 
 # driver生成

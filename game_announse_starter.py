@@ -67,14 +67,20 @@ while targetDate <= dateEnd:
         driver.get(getConfig("gameTopUrl").replace("[dateGameNo]", targetDate.strftime("%Y%m%d") + gameNo))
         commonWait()
 
-        util = Util(driver.find_element_by_css_selector("#gm_recen"))
-        away = getTeamInitial(util.getText("awayTeam"))
-        home = getTeamInitial(util.getText("homeTeam"))
+        away = "away"
+        home = "home"
 
         try:
-            contentMain = driver.find_element_by_css_selector("#strt_pit")
+            util = Util(driver.find_element_by_css_selector("#gm_recen"))
+            away = getTeamInitial(util.getText("awayTeam"))
+            home = getTeamInitial(util.getText("homeTeam"))
+        except NoSuchElementException as e:
+            util = Util(driver.find_element_by_css_selector("#ing_brd"))
+            away = getTeamInitial(util.getText("awayTeamPast"))
+            home = getTeamInitial(util.getText("homeTeamPast"))
 
-            util = Util(contentMain)
+        try:
+            util = Util(driver.find_element_by_css_selector("#strt_pit"))
             awayStartPitcher = util.getText("awayStartPitcher")
             homeStartPitcher = util.getText("homeStartPitcher")
 
@@ -88,7 +94,7 @@ while targetDate <= dateEnd:
             
             print("----- [done] date: {0}, gameNo: {1}, {2} vs {3} -----".format(pathDate, gameNo, away, home))
         except NoSuchElementException as e:
-            print("----- [Not announced yet] date: {0}, gameNo: {1}, {2} vs {3}  -----".format(pathDate, gameNo, away, home))
+            print("----- [Started or Not announced yet] date: {0}, gameNo: {1}, {2} vs {3}  -----".format(pathDate, gameNo, away, home))
 
     targetDate = targetDate + datetime.timedelta(days=1)
 
