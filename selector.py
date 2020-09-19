@@ -6,6 +6,7 @@ selectorList = {
     "gameCardsHomeTeam": ".bb-score__team p:nth-child(2)",
 
     ### トップ
+    "startTime": "#gm_brd .bb-gameCard .bb-gameDescription time",
     "awayTeam": "#gm_recen .bb-gameCard__readMore .bb-gameCard__readMoreItem:nth-child(1) span",
     "homeTeam": "#gm_recen .bb-gameCard__readMore .bb-gameCard__readMoreItem:nth-child(2) span",
     "awayStartPitcher": "#strt_pit .bb-splits__item:nth-child(1) header h1 a",
