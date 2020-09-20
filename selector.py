@@ -20,9 +20,17 @@ selectorList = {
     "topOf1": "#ing_brd tbody tr td:nth-child(2)",
 
     ### 出場成績
+    ## 野手成績
+    "awayTeamName": "#gm_stats .bb-modCommon01:nth-child(1) .bb-table--resultScoreBoard:nth-child(3) th",
+    "homeTeamName": "#gm_stats .bb-modCommon01:nth-child(1) .bb-table--resultScoreBoard:nth-child(4) th",
+    "awayScoreBoard": "#gm_stats .bb-modCommon01:nth-child(1) .bb-table--resultScoreBoard:nth-child(3) tr td",
+    "homeScoreBoard": "#gm_stats .bb-modCommon01:nth-child(1) .bb-table--resultScoreBoard:nth-child(4) tr td",
+    "awayBatStats": "#gm_stats .bb-modCommon01:nth-child(1) .bb-blowResultsTable:nth-child(2) table tbody tr",
+    "homeBatStats": "#gm_stats .bb-modCommon01:nth-child(1) .bb-blowResultsTable:nth-child(5) table tbody tr",
+    ## 投手成績
     "awayTeamFullName": "#gm_stats .bb-modCommon01:nth-child(2) .bb-modCommon02:nth-child(2) header",
-    "awayPitchStats": "#gm_stats .bb-modCommon01:nth-child(2) .bb-modCommon02:nth-child(2) table tbody tr",
     "homeTeamFullName": "#gm_stats .bb-modCommon01:nth-child(2) .bb-modCommon02:nth-child(3) header",
+    "awayPitchStats": "#gm_stats .bb-modCommon01:nth-child(2) .bb-modCommon02:nth-child(2) table tbody tr",
     "homePitchStats": "#gm_stats .bb-modCommon01:nth-child(2) .bb-modCommon02:nth-child(3) table tbody tr",
 
     ## 速報詳細

@@ -25,31 +25,64 @@ args = parser.parse_args()
 def commonWait():
     time.sleep(2)
 
-def createPitchStatsDetail(rows):
-    return {
-        "result": rows[0].text,
-        "name": rows[1].text,
-        "era": rows[2].text, # earned run average
-        "ip": rows[3].text, # innings pitched
-        "np": rows[4].text, # numbers of pitches
-        "bf": rows[5].text, # batters faced 
-        "ha": rows[6].text, # hits allowed
-        "hra": rows[7].text, # homerun allowed
-        "so": rows[8].text, # strike out
-        "bb": rows[9].text, # bases on balls
-        "hbp": rows[10].text, # hit by pitch
-        "balk": rows[11].text,
-        "ra": rows[12].text, # runs allowed
-        "er": rows[13].text # earned runs
+def createBatStatsDetail(cols):
+    data = {
+        "position": cols[0].text,
+        "name": cols[1].text,
+        "ave": cols[2].text, # average
+        "ab": cols[3].text, # at bat
+        "run": cols[4].text,
+        "hit": cols[5].text,
+        "rbi": cols[6].text, # numbers of pitches
+        "so": cols[7].text, # batters faced 
+        "bb": cols[8].text, # hits allowed
+        "hbp": cols[9].text, # homerun allowed
+        "sh": cols[10].text, # sacrifice hits
+        "sb": cols[11].text, # stolen bases
+        "e": cols[12].text, # hit by pitch
+        "hr": cols[13].text,
+        "ing1": cols[14].text,
+        "ing2": cols[15].text,
+        "ing3": cols[16].text,
+        "ing4": cols[17].text,
+        "ing5": cols[18].text,
+        "ing6": cols[19].text,
+        "ing7": cols[20].text,
+        "ing8": cols[21].text,
+        "ing9": cols[22].text
     }
 
-def createPitchStats(pitchStatusElem):
-    pitchStats = []
-    for pitchStat in pitchStatusElem:
-        rows = pitchStat.find_elements_by_css_selector("tr td")
-        if len(rows) == 14:
-            pitchStats.append(createPitchStatsDetail(rows))
-    return pitchStats
+    if len(cols) > 23:
+        data["ing10"] = cols[23].text
+
+    return data
+
+def createBatStats(statusElems):
+    stats = []
+    for statusElem in statusElems:
+        cols = statusElem.find_elements_by_css_selector("tr td")
+        if len(cols) >= 14:
+            stats.append(createBatStatsDetail(cols))
+    return stats
+
+def createScoreBoard(scoreBoardElems):
+    scoreBoard = {
+        "total": scoreBoardElems[0].text,
+        "ing1": scoreBoardElems[1].text,
+        "ing2": scoreBoardElems[2].text,
+        "ing3": scoreBoardElems[3].text,
+        "ing4": scoreBoardElems[4].text,
+        "ing5": scoreBoardElems[5].text,
+        "ing6": scoreBoardElems[6].text,
+        "ing7": scoreBoardElems[7].text,
+        "ing8": scoreBoardElems[8].text,
+        "ing9": scoreBoardElems[9].text
+    }
+
+    if len(scoreBoardElems) > 10:
+        scoreBoard["ing10"] = scoreBoardElems[10].text
+
+    return scoreBoard
 
 # driver生成
 driver = getFirefoxDriver()
@@ -74,7 +107,7 @@ try:
 
             # 日付ディレクトリ作成
             pathDate = targetDate.strftime("%Y%m%d")
-            fullPathDate = "/".join([getConfig("pathPitcherStats"), pathDate])
+            fullPathDate = "/".join([getConfig("pathBatterStats"), pathDate])
             if not os.path.exists(fullPathDate):
                 os.mkdir(fullPathDate)
 
@@ -100,11 +133,13 @@ try:
 
             awayTeam = getTeamInitialByFullName(util.getText("awayTeamFullName"))
             homeTeam = getTeamInitialByFullName(util.getText("homeTeamFullName"))
-            awayPitchStats = createPitchStats(util.getElems("awayPitchStats"))
-            homePitchStats = createPitchStats(util.getElems("homePitchStats"))
+            awayBatStats = createBatStats(util.getElems("awayBatStats"))
+            homeBatStats = createBatStats(util.getElems("homeBatStats"))
+            awayScoreBoard = createScoreBoard(util.getElems("awayScoreBoard"))
+            homeScoreBoard = createScoreBoard(util.getElems("homeScoreBoard"))
 
-            awayInfo = { "team": awayTeam, "stats": awayPitchStats }
-            homeInfo = { "team": homeTeam, "stats": homePitchStats }
+            awayInfo = { "team": awayTeam, "stats": awayBatStats, "scoreBoard": awayScoreBoard }
+            homeInfo = { "team": homeTeam, "stats": homeBatStats, "scoreBoard": homeScoreBoard }
 
             data = { "away": awayInfo, "home": homeInfo }
             # save as json
