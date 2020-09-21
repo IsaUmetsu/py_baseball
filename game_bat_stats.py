@@ -124,6 +124,13 @@ try:
             # ゲーム番号生成
             gameNo = "0" + str(gameCnt + 1)
 
+            # 指定試合の[トップ]画面へ遷移
+            driver.get(getConfig("gameTopUrl").replace("[dateGameNo]", targetDate.strftime("%Y%m%d") + gameNo))
+            commonWait()
+
+            gameState = driver.find_element_by_css_selector(getSelector("gameState")).text
+            isFinished = gameState in ["試合終了", "試合中止"]
+
             # 指定試合の[出場成績]画面へ遷移
             driver.get(getConfig("gameStatsUrl").replace("[dateGameNo]", targetDate.strftime("%Y%m%d") + gameNo))
             commonWait()
@@ -141,7 +148,7 @@ try:
             awayInfo = { "team": awayTeam, "stats": awayBatStats, "scoreBoard": awayScoreBoard }
             homeInfo = { "team": homeTeam, "stats": homeBatStats, "scoreBoard": homeScoreBoard }
 
-            data = { "away": awayInfo, "home": homeInfo }
+            data = { "away": awayInfo, "home": homeInfo, "isFinished": isFinished }
             # save as json
             with open("{0}/{1}.json".format(fullPathDate, gameNo), 'w') as f:
                 json.dump(data, f, indent=2, ensure_ascii=False)
