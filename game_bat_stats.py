@@ -39,7 +39,7 @@ def createBatStatsDetail(cols):
         "hbp": cols[9].text, # homerun allowed
         "sh": cols[10].text, # sacrifice hits
         "sb": cols[11].text, # stolen bases
-        "e": cols[12].text, # hit by pitch
+        "e": cols[12].text, # error
         "hr": cols[13].text,
         "ing1": cols[14].text,
         "ing2": cols[15].text,
