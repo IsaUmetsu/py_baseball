@@ -96,7 +96,7 @@ try:
             commonWait()
 
             gameState = driver.find_element_by_css_selector(getSelector("gameState")).text
-            isFinished = gameState in ["試合終了", "試合中止"]
+            isFinished = gameState in ["試合終了", "試合中止", "ノーゲーム"]
 
             # 指定試合の[出場成績]画面へ遷移
             driver.get(getConfig("gameStatsUrl").replace("[dateGameNo]", targetDate.strftime("%Y%m%d") + gameNo))
