@@ -26,29 +26,48 @@ def commonWait():
     time.sleep(2)
 
 def createPitchStatsDetail(rows):
-    return {
-        "result": rows[0].text,
-        "name": rows[1].text,
-        "era": rows[2].text, # earned run average
-        "ip": rows[3].text, # innings pitched
-        "np": rows[4].text, # numbers of pitches
-        "bf": rows[5].text, # batters faced 
-        "ha": rows[6].text, # hits allowed
-        "hra": rows[7].text, # homerun allowed
-        "so": rows[8].text, # strike out
-        "bb": rows[9].text, # bases on balls
-        "hbp": rows[10].text, # hit by pitch
-        "balk": rows[11].text,
-        "ra": rows[12].text, # runs allowed
-        "er": rows[13].text # earned runs
-    }
+    # 試合終了後
+    if len(rows) == 14:
+        return {
+            "result": rows[0].text,
+            "name": rows[1].text,
+            "era": rows[2].text, # earned run average
+            "ip": rows[3].text, # innings pitched
+            "np": rows[4].text, # numbers of pitches
+            "bf": rows[5].text, # batters faced 
+            "ha": rows[6].text, # hits allowed
+            "hra": rows[7].text, # homerun allowed
+            "so": rows[8].text, # strike out
+            "bb": rows[9].text, # bases on balls
+            "hbp": rows[10].text, # hit by pitch
+            "balk": rows[11].text,
+            "ra": rows[12].text, # runs allowed
+            "er": rows[13].text # earned runs
+        }
+    # 試合中
+    else:
+        return {
+            "result": "",
+            "name": rows[0].text,
+            "era": rows[1].text, # earned run average
+            "ip": rows[2].text, # innings pitched
+            "np": rows[3].text, # numbers of pitches
+            "bf": rows[4].text, # batters faced 
+            "ha": rows[5].text, # hits allowed
+            "hra": rows[6].text, # homerun allowed
+            "so": rows[7].text, # strike out
+            "bb": rows[8].text, # bases on balls
+            "hbp": rows[9].text, # hit by pitch
+            "balk": rows[10].text,
+            "ra": rows[11].text, # runs allowed
+            "er": rows[12].text # earned runs
+        }
 
 def createPitchStats(pitchStatusElem):
     pitchStats = []
     for pitchStat in pitchStatusElem:
         rows = pitchStat.find_elements_by_css_selector("tr td")
-        if len(rows) == 14:
-            pitchStats.append(createPitchStatsDetail(rows))
+        pitchStats.append(createPitchStatsDetail(rows))
     return pitchStats
 
 # driver生成
