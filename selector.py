@@ -8,10 +8,10 @@ selectorList = {
     ### トップ
     "gameState": "#gm_brd .bb-gameDetail .bb-gameCard__state",
     "startTime": "#gm_brd .bb-gameCard .bb-gameDescription time",
-    "awayTeam": "#gm_recen .bb-gameCard__readMore .bb-gameCard__readMoreItem:nth-child(1) span",
-    "homeTeam": "#gm_recen .bb-gameCard__readMore .bb-gameCard__readMoreItem:nth-child(2) span",
-    "awayStartPitcher": "#strt_pit .bb-splits__item:nth-child(1) header h1 a",
-    "homeStartPitcher": "#strt_pit .bb-splits__item:nth-child(2) header h1 a",
+    "awayTeam": "#gm_recen .bb-gameCard__readMore .bb-gameCard__readMoreItem:nth-child(2) span",
+    "homeTeam": "#gm_recen .bb-gameCard__readMore .bb-gameCard__readMoreItem:nth-child(1) span",
+    "awayStartPitcher": "#strt_pit .bb-splits__item:nth-child(2) header h1 a",
+    "homeStartPitcher": "#strt_pit .bb-splits__item:nth-child(1) header h1 a",
     "awayTeamPast": "#ing_brd tbody tr:nth-child(1) td:nth-child(1)",
     "homeTeamPast": "#ing_brd tbody tr:nth-child(2) td:nth-child(1)",
 
