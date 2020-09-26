@@ -2,8 +2,8 @@
 selectorList = {
     ### 日程結果
     "gameCards": "#gm_card .bb-score__content",
-    "gameCardsAwayTeam": ".bb-score__team p:nth-child(1)",
-    "gameCardsHomeTeam": ".bb-score__team p:nth-child(2)",
+    "gameCardsHomeTeam": ".bb-score__team p:nth-child(1)",
+    "gameCardsAwayTeam": ".bb-score__team p:nth-child(2)",
 
     ### トップ
     "gameState": "#gm_brd .bb-gameDetail .bb-gameCard__state",
