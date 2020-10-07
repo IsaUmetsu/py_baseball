@@ -74,30 +74,60 @@ try:
             startTime = util.getText("startTime")
 
             try:
-                util = Util(driver.find_element_by_css_selector("#gm_recen"))
-                away = getTeamInitial(util.getText("awayTeam"))
-                home = getTeamInitial(util.getText("homeTeam"))
+                try:
+                    # 試合前
+                    util = Util(driver.find_element_by_css_selector("#gm_recen"))
+                    away = getTeamInitial(util.getText("awayTeam"))
+                    home = getTeamInitial(util.getText("homeTeam"))
+                except NoSuchElementException as e:
+                    # 試合開始後
+                    util = Util(driver.find_element_by_css_selector("#ing_brd"))
+                    away = getTeamInitial(util.getText("awayTeamPast"))
+                    home = getTeamInitial(util.getText("homeTeamPast"))
+
+                try:
+                    # 試合前
+                    util = Util(driver.find_element_by_css_selector("#strt_pit"))
+                    awayStartPitcher = util.getText("awayStartPitcher")
+                    homeStartPitcher = util.getText("homeStartPitcher")
+
+                    awayInfo = { "team": away, "pitcher": awayStartPitcher }
+                    homeInfo = { "team": home, "pitcher": homeStartPitcher }
+
+                    data = { "start": startTime, "away": awayInfo, "home": homeInfo }
+                    # save as json
+                    with open("{0}/{1}.json".format(fullPathDate, gameNo), 'w') as f:
+                        json.dump(data, f, indent=2, ensure_ascii=False)
+                    
+                    print("----- [done] date: {0}, gameNo: {1}, {2} vs {3} -----".format(pathDate, gameNo, away, home))
+                except NoSuchElementException as e:
+                    # 試合開始後
+                    util = Util(driver.find_element_by_css_selector("#strt_mem"))
+                    awayStartPitcherPast = util.getText("awayStartPitcherPast")
+                    homeStartPitcherPast = util.getText("homeStartPitcherPast")
+
+                    awayInfo = { "team": away, "pitcher": awayStartPitcherPast }
+                    homeInfo = { "team": home, "pitcher": homeStartPitcherPast }
+
+                    data = { "start": startTime, "away": awayInfo, "home": homeInfo }
+                    # save as json
+                    with open("{0}/{1}.json".format(fullPathDate, gameNo), 'w') as f:
+                        json.dump(data, f, indent=2, ensure_ascii=False)
+                    print("----- [done] date: {0}, gameNo: {1}, {2} vs {3} -----".format(pathDate, gameNo, away, home))
+
             except NoSuchElementException as e:
-                util = Util(driver.find_element_by_css_selector("#ing_brd"))
-                away = getTeamInitial(util.getText("awayTeamPast"))
-                home = getTeamInitial(util.getText("homeTeamPast"))
+                # 試合中止時
+                gameTitleSpan = driver.find_element_by_css_selector(getSelector("gameTitleSpan")).text
+                gameTitleSpanArray = gameTitleSpan.split(" ")
 
-            try:
-                util = Util(driver.find_element_by_css_selector("#strt_pit"))
-                awayStartPitcher = util.getText("awayStartPitcher")
-                homeStartPitcher = util.getText("homeStartPitcher")
+                away = getTeamInitial(gameTitleSpanArray[2])
+                home = getTeamInitial(gameTitleSpanArray[0])
 
-                awayInfo = { "team": away, "pitcher": awayStartPitcher }
-                homeInfo = { "team": home, "pitcher": homeStartPitcher }
-
-                data = { "start": startTime, "away": awayInfo, "home": homeInfo, "tweet": False }
+                data = { "start": startTime, "away": { "team": away }, "home": { "team": home } }
                 # save as json
                 with open("{0}/{1}.json".format(fullPathDate, gameNo), 'w') as f:
                     json.dump(data, f, indent=2, ensure_ascii=False)
-                
-                print("----- [done] date: {0}, gameNo: {1}, {2} vs {3} -----".format(pathDate, gameNo, away, home))
-            except NoSuchElementException as e:
-                print("----- [Started or Not announced yet] date: {0}, gameNo: {1}, {2} vs {3}  -----".format(pathDate, gameNo, away, home))
+                print("----- [pending game] date: {0}, gameNo: {1}, {2} vs {3} -----".format(pathDate, gameNo, away, home))
 
         targetDate = targetDate + datetime.timedelta(days=1)
 

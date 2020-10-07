@@ -14,6 +14,9 @@ selectorList = {
     "homeStartPitcher": "#strt_pit .bb-splits__item:nth-child(1) header h1 a",
     "awayTeamPast": "#ing_brd tbody tr:nth-child(1) td:nth-child(1)",
     "homeTeamPast": "#ing_brd tbody tr:nth-child(2) td:nth-child(1)",
+    "awayStartPitcherPast": "#strt_mem section .bb-splits__item:nth-child(2) table:nth-child(2) tbody tr td:nth-child(3)",
+    "homeStartPitcherPast": "#strt_mem section .bb-splits__item:nth-child(1) table:nth-child(2) tbody tr td:nth-child(3)",
+    "gameTitleSpan": "#gm_menu section span",
 
     ### 一球速報
     ## イニング
