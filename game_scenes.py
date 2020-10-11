@@ -97,11 +97,11 @@ try:
                 files.remove('.DS_Store')
             fileCount = len(files)
 
-            # 初期遷移時が 試合前 の場合は保存せず次の試合へ
-            if currentInningTopBtm in ["試合前"]:
+            # 初期遷移時が 試合前、試合中止、ノーゲーム の場合は保存せず次の試合へ
+            if currentInningTopBtm in ["試合前", "試合中止", "ノーゲーム"]:
                 continue
-            # 初期遷移時が 試合終了、試合中止、試合前 以外の場合
-            if currentInningTopBtm not in ["試合終了", "試合中止", "ノーゲーム"]:
+            # 初期遷移時が 試合終了 以外の場合
+            if currentInningTopBtm not in ["試合終了"]:
                 # 取得対象(終了) のイニング決定
                 currentInning, currentTopBtm = currentInningTopBtm.split("回")
                 toInning = int(currentInning)
