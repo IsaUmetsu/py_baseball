@@ -4,11 +4,13 @@ def getConfig(key):
         "gameScoreUrl": "https://baseball.yahoo.co.jp/npb/game/[dateGameNo]/score",
         "gameTopUrl": "https://baseball.yahoo.co.jp/npb/game/[dateGameNo]/top",
         "gameStatsUrl": "https://baseball.yahoo.co.jp/npb/game/[dateGameNo]/stats",
+        "gameTextUrl": "https://baseball.yahoo.co.jp/npb/game/[dateGameNo]/text",
         "pathBase": "/Users/IsamuUmetsu/dev/py_baseball/output",
         "pathBaseCards": "/Users/IsamuUmetsu/dev/py_baseball/cards",
         "pathBaseStarter": "/Users/IsamuUmetsu/dev/py_baseball/starter",
         "pathPitcherStats": "/Users/IsamuUmetsu/dev/py_baseball/pitcherStats",
         "pathBatterStats": "/Users/IsamuUmetsu/dev/py_baseball/batterStats",
+        "pathTextStats": "/Users/IsamuUmetsu/dev/py_baseball/text",
     }
     return config[key]
 

@@ -18,6 +18,15 @@ selectorList = {
     "homeStartPitcherPast": "#strt_mem section .bb-splits__item:nth-child(1) table:nth-child(2) tbody tr td:nth-child(3)",
     "gameTitleSpan": "#gm_menu section span",
 
+    ## テキスト速報
+    "batResult": "#text_live .bb-liveText",
+    "batResultInning": "header h1",
+    "batResultTeam": "header p",
+    "batResultUnit": ".bb-liveText__orderedList .bb-liveText__item",
+    "batResultUnitOrder": ".bb-liveText__text .bb-liveText__batter .bb-liveText__order",
+    "batResultUnitBatter": ".bb-liveText__text .bb-liveText__batter .bb-liveText__player",
+    "summaryPoint": ".bb-liveText__text .bb-liveText__summary--point",
+
     ### 一球速報
     ## イニング
     "inningBase": "#ing_brd tbody tr:nth-child({0}) td:nth-child({1})",
