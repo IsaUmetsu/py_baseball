@@ -99,6 +99,8 @@ try:
 
             # 初期遷移時が 試合前、試合中止、ノーゲーム の場合は保存せず次の試合へ
             if currentInningTopBtm in ["試合前", "試合中止", "ノーゲーム"]:
+                with open("{0}/1.json".format(fullGamePath), 'w') as f:
+                    json.dump({"liveHeader": {"inning": currentInningTopBtm }}, f, indent=2, ensure_ascii=False)
                 continue
             # 初期遷移時が 試合終了 以外の場合
             if currentInningTopBtm not in ["試合終了"]:
