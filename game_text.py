@@ -140,6 +140,7 @@ try:
                             data.append({
                                 "inning": orderListUtil.getText("batResultInning"),
                                 "team": orderListUtil.getText("batResultTeam"),
+                                "no": batResultUnitUtil.getText("batResultUnitNo"),
                                 "order": batResultUnitUtil.getText("batResultUnitOrder"),
                                 "batter": batResultUnitUtil.getText("batResultUnitBatter"),
                                 "detail": summaryPoint.text

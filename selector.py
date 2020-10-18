@@ -23,6 +23,7 @@ selectorList = {
     "batResultInning": "header h1",
     "batResultTeam": "header p",
     "batResultUnit": ".bb-liveText__orderedList .bb-liveText__item",
+    "batResultUnitNo": ".bb-liveText__number",
     "batResultUnitOrder": ".bb-liveText__text .bb-liveText__batter .bb-liveText__order",
     "batResultUnitBatter": ".bb-liveText__text .bb-liveText__batter .bb-liveText__player",
     "summaryPoint": ".bb-liveText__text .bb-liveText__summary--point",
