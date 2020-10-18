@@ -118,7 +118,7 @@ try:
                 savedLatestInningTopBtm = loadedJson["liveHeader"]["inning"]
                 print("----- game: {0}, savedLatestInningTopBtm: {1} -----".format(gameNo, savedLatestInningTopBtm))
                 # 試合終了まで取得済みの場合、保存対象外
-                if savedLatestInningTopBtm in ["試合終了", "試合中止", "試合前", "ノーゲーム"]:
+                if savedLatestInningTopBtm in ["試合終了", "試合中止", "ノーゲーム"]:
                     continue
                 # 試合途中まで取得済みの場合
                 else:
