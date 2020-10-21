@@ -121,7 +121,8 @@ try:
                 if savedLatestInningTopBtm in ["試合終了", "試合中止", "ノーゲーム"]:
                     continue
                 elif savedLatestInningTopBtm in ["試合前"]:
-                    # 何もしない
+                    # ファイルカウントを0に戻す
+                    fileCount = 0
                     print('not start game')
                 # 試合途中まで取得済みの場合
                 else:
