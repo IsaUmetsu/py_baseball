@@ -1,6 +1,8 @@
+import re
 from selenium.common.exceptions import NoSuchElementException
 
 from selector import getSelector
+from config import getConfig
 
 class Util:
     def __init__(self, driver):
@@ -49,3 +51,8 @@ class Util:
             return self.driver.find_elements_by_css_selector(fullSelector)
         except NoSuchElementException:
             return []
+
+    def getGameNo(self, gameCard, pathDate):
+        indexUrlRegex = getConfig('gameIndexUrl').replace('[dateGameNo]', pathDate + '0(\d)')
+        searchResult = re.findall(indexUrlRegex, gameCard.get_attribute('href'))
+        return searchResult[0] if len(searchResult) > 0 else ''

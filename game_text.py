@@ -18,8 +18,8 @@ from util import Util
 parser = argparse.ArgumentParser(prog="blowser", add_help=True)
 parser.add_argument('-ss', '--season-start', type=str, default=datetime.datetime.now().strftime("%m%d"))
 parser.add_argument('-se', '--season-end', type=str, default=datetime.datetime.now().strftime("%m%d"))
-parser.add_argument('-s', '--specify', nargs='+', type=int)
-parser.add_argument('-e', '--exclude', nargs='+', type=int)
+parser.add_argument('-s', '--specify', nargs='+', type=str)
+parser.add_argument('-e', '--exclude', nargs='+', type=str)
 args = parser.parse_args()
 
 def commonWait():
@@ -85,30 +85,26 @@ try:
         driver.get(getConfig("scheduleUrl").replace("[date]", targetDate.strftime("%Y-%m-%d")))
         commonWait()
 
-        gameElems = util.getElems("gameCards")
-
-        for gameCnt in range(len(gameElems)):
+        for gameCard in util.getElems("gameCards"):
             startTime = time.time()
-            gameElem = gameElems[gameCnt]
-
             # 日付ディレクトリ作成
             pathDate = targetDate.strftime("%Y%m%d")
             fullPathDate = "/".join([getConfig("pathTextStats"), pathDate])
             if not os.path.exists(fullPathDate):
                 os.mkdir(fullPathDate)
 
+            # 試合番号生成
+            gameNo = util.getGameNo(gameCard, pathDate)
             # 特定試合 指定時
             if args.specify:
-                if (gameCnt + 1) not in args.specify:
+                if gameNo not in args.specify:
                     continue
-
             # 特定試合 除外時
             if args.exclude:
-                if (gameCnt + 1) in args.exclude:
+                if gameNo in args.exclude:
                     continue
-
             # ゲーム番号生成
-            gameNo = "0" + str(gameCnt + 1)
+            gameNo = '0' + gameNo
 
             # 指定試合の[トップ]画面へ遷移
             driver.get(getConfig("gameTopUrl").replace("[dateGameNo]", targetDate.strftime("%Y%m%d") + gameNo))
