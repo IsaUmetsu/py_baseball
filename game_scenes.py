@@ -46,32 +46,42 @@ try:
         driver.get(getConfig("scheduleUrl").replace("[date]", targetDate.strftime("%Y-%m-%d")))
         commonWait()
 
-        for gameCard in util.getElems("gameCards"):
-        # for gameCnt in range(len(util.getElems("gameCards"))):
+        # for gameCard in util.getElems("gameCards"):
+        gameElems = util.getElems("gameCards")
+
+        for gameCnt in range(len(gameElems)):
             # 日付ディレクトリ作成
             pathDate = targetDate.strftime("%Y%m%d")
             fullPathDate = "/".join([getConfig("pathBase"), pathDate])
             if not os.path.exists(fullPathDate):
                 os.mkdir(fullPathDate)
-            # 試合番号生成
-            gameNo = util.getGameNo(gameCard, pathDate)
 
-            # 取得済みのホークス戦はスキップ
-            # if hawksGameInfo[pathDate] == (gameCnt + 1):
-            #     continue;
+            # # 試合番号生成
+            # gameNo = util.getGameNo(gameCard, pathDate)
+            # # 特定試合 指定時
+            # if args.specify:
+            #     if gameNo not in args.specify:
+            #         continue
+            # # 特定試合 除外時
+            # if args.exclude:
+            #     if gameNo in args.exclude:
+            #         continue
+            # # ゲームディレクトリ作成
+            # gameNo = '0' + gameNo
 
+            # ゲーム番号生成
+            gameNo = str(gameCnt + 1)
             # 特定試合 指定時
             if args.specify:
                 if gameNo not in args.specify:
                     continue
-
             # 特定試合 除外時
             if args.exclude:
                 if gameNo in args.exclude:
                     continue
+            # ゲーム番号再生成
+            gameNo = "0" + gameNo
 
-            # ゲームディレクトリ作成
-            gameNo = '0' + gameNo
             fullGamePath = "/".join([getConfig("pathBase"), pathDate, gameNo])
             if not os.path.exists(fullGamePath):
                 os.mkdir(fullGamePath)

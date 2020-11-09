@@ -99,7 +99,10 @@ try:
         driver.get(getConfig("scheduleUrl").replace("[date]", targetDate.strftime("%Y-%m-%d")))
         commonWait()
 
-        for gameCard in util.getElems("gameCards"):
+        # for gameCard in util.getElems("gameCards"):
+        gameElems = util.getElems("gameCards")
+
+        for gameCnt in range(len(gameElems)):
             startTime = time.time()
             # 日付ディレクトリ作成
             pathDate = targetDate.strftime("%Y%m%d")
@@ -107,8 +110,21 @@ try:
             if not os.path.exists(fullPathDate):
                 os.mkdir(fullPathDate)
 
-            # 試合番号生成
-            gameNo = util.getGameNo(gameCard, pathDate)
+            # # 試合番号生成
+            # gameNo = util.getGameNo(gameCard, pathDate)
+            # # 特定試合 指定時
+            # if args.specify:
+            #     if gameNo not in args.specify:
+            #         continue
+            # # 特定試合 除外時
+            # if args.exclude:
+            #     if gameNo in args.exclude:
+            #         continue
+            # # ゲーム番号生成
+            # gameNo = '0' + gameNo
+
+            # ゲーム番号生成
+            gameNo = str(gameCnt + 1)
             # 特定試合 指定時
             if args.specify:
                 if gameNo not in args.specify:
@@ -117,8 +133,8 @@ try:
             if args.exclude:
                 if gameNo in args.exclude:
                     continue
-            # ゲーム番号生成
-            gameNo = '0' + gameNo
+            # ゲーム番号再生成
+            gameNo = "0" + gameNo
 
             # 指定試合の[トップ]画面へ遷移
             driver.get(getConfig("gameTopUrl").replace("[dateGameNo]", targetDate.strftime("%Y%m%d") + gameNo))
