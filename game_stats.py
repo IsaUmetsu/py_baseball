@@ -245,7 +245,7 @@ try:
             with open("{0}/{1}.json".format(fullPathDate, gameNo), 'w') as f:
                 json.dump(data, f, indent=2, ensure_ascii=False)
             
-            print("----- [done][bat] date: {0}, gameNo: {1}, {2} vs {3}, {4:3.1f}[sec] -----".format(
+            print("----- [done]  [bat] date: {0}, gameNo: {1}, {2} vs {3}, {4:3.1f}[sec] -----".format(
                     pathDate, gameNo, awayTeam, homeTeam, time.time() - startTime))
 
             ### text
@@ -293,8 +293,8 @@ try:
             with open("{0}/{1}.json".format(fullPathDate, gameNo), 'w') as f:
                 json.dump(data, f, indent=2, ensure_ascii=False)
             
-            print("----- [done][text] date: {0}, gameNo: {1}, {2:3.1f}[sec] -----".format(
-                    pathDate, gameNo, time.time() - startTime))
+            print("----- [done] [text] date: {0}, gameNo: {1}, {2} vs {3}, {4:3.1f}[sec] -----".format(
+                    pathDate, gameNo, awayTeam, homeTeam, time.time() - startTime))
 
         targetDate = targetDate + datetime.timedelta(days=1)
 
