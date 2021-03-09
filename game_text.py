@@ -137,7 +137,7 @@ try:
             # 指定試合の[テキスト速報]画面へ遷移
             # driver.get(getConfig("gameTextUrl").replace("[dateGameNo]", targetDate.strftime("%Y%m%d") + gameNo))
             if datetime.datetime.strptime("20210302", "%Y%m%d") <= targetDate and targetDate <= datetime.datetime.strptime("20210325", "%Y%m%d"):
-                targetDateInfo = getOpen2021(dtargetDate.strftime("%m%d"))
+                targetDateInfo = getOpen2021(targetDate.strftime("%m%d"))
                 driver.get(getConfig("gameTextUrl").replace("[dateGameNo]", "20210000" + targetDateInfo[gameCnt]))
             else:
                 driver.get(getConfig("gameTextUrl").replace("[dateGameNo]", pathDate + gameNo))
