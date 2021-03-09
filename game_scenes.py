@@ -11,9 +11,12 @@ from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchElementException
 
 from selector import getSelector
-from config import getConfig, getHawksGameInfo
+from config import getConfig, getHawksGameInfo, getOpen2021
 from driver import getChromeDriver, getFirefoxDriver
 from util import Util
+
+# 年を2021 にする
+# オープン戦は試合番号を取得して取るようにする
 
 parser = argparse.ArgumentParser(prog="blowser", add_help=True)
 parser.add_argument('-ss', '--season-start', type=str, default=datetime.datetime.now().strftime("%m%d"))
@@ -33,8 +36,8 @@ def getInningSelector(inning, topBtm):
 driver = getFirefoxDriver()
 util = Util(driver)
 # シーズン開始日設定
-targetDate = datetime.datetime.strptime("2020" + args.season_start, "%Y%m%d")
-dateEnd = datetime.datetime.strptime("2020" + args.season_end, "%Y%m%d")
+targetDate = datetime.datetime.strptime("2021" + args.season_start, "%Y%m%d")
+dateEnd = datetime.datetime.strptime("2021" + args.season_end, "%Y%m%d")
 # ホークス戦情報取得
 hawksGameInfo = getHawksGameInfo()
 
@@ -87,7 +90,13 @@ try:
                 os.mkdir(fullGamePath)
 
             #「一球速報」に遷移
-            driver.get(getConfig("gameScoreUrl").replace("[dateGameNo]", pathDate + gameNo))
+            if datetime.datetime.strptime("20210302", "%Y%m%d") <= targetDate and targetDate <= datetime.datetime.strptime("20210325", "%Y%m%d"):
+                targetDateInfo = getOpen2021(targetDate.strftime("%m%d"))
+                print(" -- gameNo: " + targetDateInfo[gameCnt] + " --")
+                driver.get(getConfig("gameScoreUrl").replace("[dateGameNo]", "20210000" + targetDateInfo[gameCnt]))
+            else:
+                driver.get(getConfig("gameScoreUrl").replace("[dateGameNo]", pathDate + gameNo))
+            
             commonWait()
             # メインコンテンツ
             contentMain = driver.find_element_by_css_selector("#contentMain")
