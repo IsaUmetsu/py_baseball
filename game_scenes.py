@@ -11,7 +11,7 @@ from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchElementException
 
 from selector import getSelector
-from config import getConfig, getHawksGameInfo, getOpen2021
+from config import getConfig, getHawksGameInfo, getOpen2021, getLeague2021
 from driver import getChromeDriver, getFirefoxDriver
 from util import Util
 
@@ -95,7 +95,9 @@ try:
                 print(" -- gameNo: " + targetDateInfo[gameCnt] + " --")
                 driver.get(getConfig("gameScoreUrl").replace("[dateGameNo]", "20210000" + targetDateInfo[gameCnt]))
             else:
-                driver.get(getConfig("gameScoreUrl").replace("[dateGameNo]", pathDate + gameNo))
+                # driver.get(getConfig("gameScoreUrl").replace("[dateGameNo]", pathDate + gameNo))
+                targetDateInfo = getLeague2021(targetDate.strftime("%m%d"))
+                driver.get(getConfig("gameScoreUrl").replace("[dateGameNo]", "2021000" + targetDateInfo[gameCnt]))
             
             commonWait()
             # メインコンテンツ
@@ -127,6 +129,7 @@ try:
             # 初期遷移時が 試合終了 以外の場合
             if currentInningTopBtm not in ["試合終了"]:
                 # 取得対象(終了) のイニング決定
+                print(currentInningTopBtm)
                 currentInning, currentTopBtm = currentInningTopBtm.split("回")
                 toInning = int(currentInning)
                 toTopBtm = currentTopBtm
@@ -271,6 +274,8 @@ try:
                     data["liveBody"] = liveBody
                     # ------------ /ライブボディ ------------
 
+                    commonWait() # liveheader, livebody 取得後に wait
+
                     pitchInfo = {}
                     # 投球詳細
                     pitchDetailsElem = util.getElems("pitchDetail")
@@ -397,6 +402,22 @@ try:
 
             except TimeoutException as te:
                 print(te)
+                print("----- [error] "\
+                        "date: {0}, "
+                        "gameNo: {1}, "\
+                        "scene: {2:3d}, "\
+                        "inning: {3}, "\
+                        "{4}アウト, "\
+                        "{5:3.1f}[sec]"\
+                        " -----".format(
+                            pathDate,
+                            gameNo,
+                            scene,
+                            data["liveHeader"]["inning"],
+                            data["liveHeader"]["count"]["o"],
+                            time.time() - startTime
+                        )
+                    )
 
         targetDate = targetDate + datetime.timedelta(days=1)
         util = Util(driver)

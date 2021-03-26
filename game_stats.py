@@ -11,7 +11,7 @@ from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchElementException
 
 from selector import getSelector
-from config import getConfig, getTeamInitial, getTeamInitialByFullName, getOpen2021
+from config import getConfig, getTeamInitial, getTeamInitialByFullName, getOpen2021, getLeague2021
 from driver import getChromeDriver, getFirefoxDriver
 from util import Util
 
@@ -187,7 +187,9 @@ try:
                 targetDateInfo = getOpen2021(targetDate.strftime("%m%d"))
                 driver.get(getConfig("gameTopUrl").replace("[dateGameNo]", "20210000" + targetDateInfo[gameCnt]))
             else:
-                driver.get(getConfig("gameTopUrl").replace("[dateGameNo]", pathDate + gameNo))
+                # driver.get(getConfig("gameTopUrl").replace("[dateGameNo]", pathDate + gameNo))
+                targetDateInfo = getLeague2021(targetDate.strftime("%m%d"))
+                driver.get(getConfig("gameTopUrl").replace("[dateGameNo]", "2021000" + targetDateInfo[gameCnt]))
 
             commonWait()
 
@@ -200,7 +202,9 @@ try:
                 targetDateInfo = getOpen2021(targetDate.strftime("%m%d"))
                 driver.get(getConfig("gameStatsUrl").replace("[dateGameNo]", "20210000" + targetDateInfo[gameCnt]))
             else:
-                driver.get(getConfig("gameStatsUrl").replace("[dateGameNo]", pathDate + gameNo))
+                # driver.get(getConfig("gameStatsUrl").replace("[dateGameNo]", pathDate + gameNo))
+                targetDateInfo = getLeague2021(targetDate.strftime("%m%d"))
+                driver.get(getConfig("gameStatsUrl").replace("[dateGameNo]", "2021000" + targetDateInfo[gameCnt]))
 
             commonWait()
 
@@ -261,7 +265,9 @@ try:
                 targetDateInfo = getOpen2021(targetDate.strftime("%m%d"))
                 driver.get(getConfig("gameTextUrl").replace("[dateGameNo]", "20210000" + targetDateInfo[gameCnt]))
             else:
-                driver.get(getConfig("gameTextUrl").replace("[dateGameNo]", pathDate + gameNo))
+                # driver.get(getConfig("gameTextUrl").replace("[dateGameNo]", pathDate + gameNo))
+                targetDateInfo = getLeague2021(targetDate.strftime("%m%d"))
+                driver.get(getConfig("gameTextUrl").replace("[dateGameNo]", "2021000" + targetDateInfo[gameCnt]))
             commonWait()
             # 範囲限定
             contentMain = driver.find_element_by_css_selector("#text_live")
