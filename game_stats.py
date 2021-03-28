@@ -11,7 +11,7 @@ from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchElementException
 
 from selector import getSelector
-from config import getConfig, getTeamInitial, getTeamInitialByFullName, getOpen2021, getLeague2021
+from config import getConfig, getTeamInitial, getTeamInitialByFullName, getLeague2021
 from driver import getChromeDriver, getFirefoxDriver
 from util import Util
 
@@ -181,31 +181,22 @@ try:
             # ゲーム番号再生成
             gameNo = "0" + gameNo
 
-            # 指定試合の[トップ]画面へ遷移
-            # driver.get(getConfig("gameTopUrl").replace("[dateGameNo]", targetDate.strftime("%Y%m%d") + gameNo))
-            if datetime.datetime.strptime("20210302", "%Y%m%d") <= targetDate and targetDate <= datetime.datetime.strptime("20210325", "%Y%m%d"):
-                targetDateInfo = getOpen2021(targetDate.strftime("%m%d"))
-                driver.get(getConfig("gameTopUrl").replace("[dateGameNo]", "20210000" + targetDateInfo[gameCnt]))
-            else:
-                # driver.get(getConfig("gameTopUrl").replace("[dateGameNo]", pathDate + gameNo))
-                targetDateInfo = getLeague2021(targetDate.strftime("%m%d"))
-                driver.get(getConfig("gameTopUrl").replace("[dateGameNo]", "2021000" + targetDateInfo[gameCnt]))
+            # URL一部分作成
+            dateGameNo = pathDate + gameNo
+            if targetDate.strftime("%Y") == "2021":
+                start, end = getLeague2021(targetDate.strftime("%m%d"))
+                targetDateInfo = range(start, end + 1)
+                dateGameNo = "202100" + str(targetDateInfo[gameCnt]).zfill(4)
 
+            # 指定試合の[トップ]画面へ遷移
+            driver.get(getConfig("gameTopUrl").replace("[dateGameNo]", dateGameNo))
             commonWait()
 
             gameState = driver.find_element_by_css_selector(getSelector("gameState")).text
             isFinished = gameState in ["試合終了", "試合中止", "ノーゲーム"]
 
             # 指定試合の[出場成績]画面へ遷移
-            # driver.get(getConfig("gameStatsUrl").replace("[dateGameNo]", targetDate.strftime("%Y%m%d") + gameNo))
-            if datetime.datetime.strptime("20210302", "%Y%m%d") <= targetDate and targetDate <= datetime.datetime.strptime("20210325", "%Y%m%d"):
-                targetDateInfo = getOpen2021(targetDate.strftime("%m%d"))
-                driver.get(getConfig("gameStatsUrl").replace("[dateGameNo]", "20210000" + targetDateInfo[gameCnt]))
-            else:
-                # driver.get(getConfig("gameStatsUrl").replace("[dateGameNo]", pathDate + gameNo))
-                targetDateInfo = getLeague2021(targetDate.strftime("%m%d"))
-                driver.get(getConfig("gameStatsUrl").replace("[dateGameNo]", "2021000" + targetDateInfo[gameCnt]))
-
+            driver.get(getConfig("gameStatsUrl").replace("[dateGameNo]", dateGameNo))
             commonWait()
 
             contentMain = driver.find_element_by_css_selector("#gm_stats")
@@ -260,14 +251,7 @@ try:
             if not os.path.exists(fullPathDate):
                 os.mkdir(fullPathDate)
             # 指定試合の[テキスト速報]画面へ遷移
-            # driver.get(getConfig("gameTextUrl").replace("[dateGameNo]", targetDate.strftime("%Y%m%d") + gameNo))
-            if datetime.datetime.strptime("20210302", "%Y%m%d") <= targetDate and targetDate <= datetime.datetime.strptime("20210325", "%Y%m%d"):
-                targetDateInfo = getOpen2021(targetDate.strftime("%m%d"))
-                driver.get(getConfig("gameTextUrl").replace("[dateGameNo]", "20210000" + targetDateInfo[gameCnt]))
-            else:
-                # driver.get(getConfig("gameTextUrl").replace("[dateGameNo]", pathDate + gameNo))
-                targetDateInfo = getLeague2021(targetDate.strftime("%m%d"))
-                driver.get(getConfig("gameTextUrl").replace("[dateGameNo]", "2021000" + targetDateInfo[gameCnt]))
+            driver.get(getConfig("gameTextUrl").replace("[dateGameNo]", dateGameNo))
             commonWait()
             # 範囲限定
             contentMain = driver.find_element_by_css_selector("#text_live")

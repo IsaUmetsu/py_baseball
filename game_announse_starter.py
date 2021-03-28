@@ -11,7 +11,7 @@ from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchElementException
 
 from selector import getSelector
-from config import getConfig, getTeamInitial, getOpen2021, getLeague2021
+from config import getConfig, getTeamInitial, getLeague2021
 from driver import getChromeDriver, getFirefoxDriver
 from util import Util
 
@@ -77,15 +77,15 @@ try:
             # ゲーム番号再生成
             gameNo = "0" + gameNo
 
+            # URL一部分作成
+            dateGameNo = pathDate + gameNo
+            if targetDate.strftime("%Y") == "2021":
+                start, end = getLeague2021(targetDate.strftime("%m%d"))
+                targetDateInfo = range(start, end + 1)
+                dateGameNo = "202100" + str(targetDateInfo[gameCnt]).zfill(4)
+
             # 指定試合の[トップ]画面へ遷移
-            # driver.get(getConfig("gameTopUrl").replace("[dateGameNo]", targetDate.strftime("%Y%m%d") + gameNo))
-            if datetime.datetime.strptime("20210302", "%Y%m%d") <= targetDate and targetDate <= datetime.datetime.strptime("20210325", "%Y%m%d"):
-                targetDateInfo = getOpen2021(targetDate.strftime("%m%d"))
-                driver.get(getConfig("gameTopUrl").replace("[dateGameNo]", "20210000" + targetDateInfo[gameCnt]))
-            else:
-                # driver.get(getConfig("gameTextUrl").replace("[dateGameNo]", pathDate + gameNo))
-                targetDateInfo = getLeague2021(targetDate.strftime("%m%d"))
-                driver.get(getConfig("gameTopUrl").replace("[dateGameNo]", "2021000" + targetDateInfo[gameCnt]))
+            driver.get(getConfig("gameTopUrl").replace("[dateGameNo]", dateGameNo))
             commonWait()
 
             away = "away"

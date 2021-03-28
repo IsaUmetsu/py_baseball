@@ -11,7 +11,7 @@ from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchElementException
 
 from selector import getSelector
-from config import getConfig, getHawksGameInfo, getOpen2021, getLeague2021
+from config import getConfig, getHawksGameInfo, getLeague2021
 from driver import getChromeDriver, getFirefoxDriver
 from util import Util
 
@@ -89,16 +89,15 @@ try:
             if not os.path.exists(fullGamePath):
                 os.mkdir(fullGamePath)
 
+            # URL一部生成
+            dateGameNo = pathDate + gameNo
+            if targetDate.strftime("%Y") == "2021":
+                start, end = getLeague2021(targetDate.strftime("%m%d"))
+                targetDateInfo = range(start, end + 1)
+                dateGameNo = "202100" + str(targetDateInfo[gameCnt]).zfill(4)
+
             #「一球速報」に遷移
-            if datetime.datetime.strptime("20210302", "%Y%m%d") <= targetDate and targetDate <= datetime.datetime.strptime("20210325", "%Y%m%d"):
-                targetDateInfo = getOpen2021(targetDate.strftime("%m%d"))
-                print(" -- gameNo: " + targetDateInfo[gameCnt] + " --")
-                driver.get(getConfig("gameScoreUrl").replace("[dateGameNo]", "20210000" + targetDateInfo[gameCnt]))
-            else:
-                # driver.get(getConfig("gameScoreUrl").replace("[dateGameNo]", pathDate + gameNo))
-                targetDateInfo = getLeague2021(targetDate.strftime("%m%d"))
-                driver.get(getConfig("gameScoreUrl").replace("[dateGameNo]", "2021000" + targetDateInfo[gameCnt]))
-            
+            driver.get(getConfig("gameScoreUrl").replace("[dateGameNo]", dateGameNo))
             commonWait()
             # メインコンテンツ
             contentMain = driver.find_element_by_css_selector("#contentMain")
@@ -129,7 +128,6 @@ try:
             # 初期遷移時が 試合終了 以外の場合
             if currentInningTopBtm not in ["試合終了"]:
                 # 取得対象(終了) のイニング決定
-                print(currentInningTopBtm)
                 currentInning, currentTopBtm = currentInningTopBtm.split("回")
                 toInning = int(currentInning)
                 toTopBtm = currentTopBtm
