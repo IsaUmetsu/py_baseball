@@ -147,7 +147,16 @@ try:
         # for gameCard in util.getElems("gameCards"):
         gameElems = util.getElems("gameCards")
 
+        gameNos = []
         for idx, gameElem in enumerate(gameElems):
+            url = gameElem.get_attribute("href")
+            gameNoArr = re.findall(r'https://baseball.yahoo.co.jp/npb/game/2021(\d+)/index', url)
+            if len(gameNoArr) == 0:
+                print ("not exist gameNo")
+                break
+            gameNos.append(gameNoArr[0])
+
+        for idx, gameNoStr in enumerate(gameNos):
             startTime = time.time()
             # 日付ディレクトリ作成 (pitch)
             pathDate = targetDate.strftime("%Y%m%d")
@@ -174,11 +183,7 @@ try:
                 # start, end = getLeague2021(targetDate.strftime("%m%d"))
                 # targetDateInfo = range(start, end + 1)
                 # dateGameNo = "202100" + str(targetDateInfo[gameCnt]).zfill(4)
-                gameNoArr = re.findall(r'https://baseball.yahoo.co.jp/npb/game/2021(\d+)/index', gameElem.get_attribute("href"))
-                if len(gameNoArr) == 0:
-                    print ("not exist gameNo")
-                    break
-                dateGameNo = "2021" + gameNoArr[0]
+                dateGameNo = "2021" + gameNoStr
 
             # 指定試合の[トップ]画面へ遷移
             driver.get(getConfig("gameTopUrl").replace("[dateGameNo]", dateGameNo))
