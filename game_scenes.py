@@ -49,31 +49,17 @@ try:
         driver.get(getConfig("scheduleUrl").replace("[date]", targetDate.strftime("%Y-%m-%d")))
         commonWait()
 
-        # for gameCard in util.getElems("gameCards"):
         gameElems = util.getElems("gameCards")
 
-        for gameCnt in range(len(gameElems)):
+        for idx, gameElem in enumerate(gameElems):
             # 日付ディレクトリ作成
             pathDate = targetDate.strftime("%Y%m%d")
             fullPathDate = "/".join([getConfig("pathBase"), pathDate])
             if not os.path.exists(fullPathDate):
                 os.mkdir(fullPathDate)
 
-            # # 試合番号生成
-            # gameNo = util.getGameNo(gameCard, pathDate)
-            # # 特定試合 指定時
-            # if args.specify:
-            #     if gameNo not in args.specify:
-            #         continue
-            # # 特定試合 除外時
-            # if args.exclude:
-            #     if gameNo in args.exclude:
-            #         continue
-            # # ゲームディレクトリ作成
-            # gameNo = '0' + gameNo
-
             # ゲーム番号生成
-            gameNo = str(gameCnt + 1)
+            gameNo = str(idx + 1)
             # 特定試合 指定時
             if args.specify:
                 if gameNo not in args.specify:
@@ -92,9 +78,14 @@ try:
             # URL一部生成
             dateGameNo = pathDate + gameNo
             if targetDate.strftime("%Y") == "2021":
-                start, end = getLeague2021(targetDate.strftime("%m%d"))
-                targetDateInfo = range(start, end + 1)
-                dateGameNo = "202100" + str(targetDateInfo[gameCnt]).zfill(4)
+                # start, end = getLeague2021(targetDate.strftime("%m%d"))
+                # targetDateInfo = range(start, end + 1)
+                # dateGameNo = "202100" + str(targetDateInfo[gameCnt]).zfill(4)
+                gameNoArr = re.findall(r'https://baseball.yahoo.co.jp/npb/game/2021(\d+)/index', gameElem.get_attribute("href"))
+                if len(gameNoArr) == 0:
+                    print ("not exist gameNo")
+                    break
+                dateGameNo = "2021" + gameNoArr[0]
 
             #「一球速報」に遷移
             driver.get(getConfig("gameScoreUrl").replace("[dateGameNo]", dateGameNo))

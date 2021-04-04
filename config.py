@@ -12,6 +12,7 @@ def getConfig(key):
         "pathPitcherStats": "/Users/IsamuUmetsu/dev/py_baseball/pitcherStats",
         "pathBatterStats": "/Users/IsamuUmetsu/dev/py_baseball/batterStats",
         "pathTextStats": "/Users/IsamuUmetsu/dev/py_baseball/text",
+        "pathBaseTest": "/Users/IsamuUmetsu/dev/py_baseball/test",
     }
     return config[key]
 
