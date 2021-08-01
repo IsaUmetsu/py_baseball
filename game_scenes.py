@@ -11,12 +11,10 @@ from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchElementException
 
 from selector import getSelector
-from config import getConfig, getHawksGameInfo, getLeague2021
+from config import getConfig, getLeague2021, isTokyoOlympicsPeriod
 from driver import getChromeDriver, getFirefoxDriver
 from util import Util
-
-# 年を2021 にする
-# オープン戦は試合番号を取得して取るようにする
+from common import getGameNos, commonWait
 
 parser = argparse.ArgumentParser(prog="blowser", add_help=True)
 parser.add_argument('-ss', '--season-start', type=str, default=datetime.datetime.now().strftime("%m%d"))
@@ -24,9 +22,6 @@ parser.add_argument('-se', '--season-end', type=str, default=datetime.datetime.n
 parser.add_argument('-s', '--specify', nargs='+', type=str)
 parser.add_argument('-e', '--exclude', nargs='+', type=str)
 args = parser.parse_args()
-
-def commonWait():
-    time.sleep(2)
 
 def getInningSelector(inning, topBtm):
     topBtmDic = { "表": 1, "裏": 2 }
@@ -38,8 +33,6 @@ util = Util(driver)
 # シーズン開始日設定
 targetDate = datetime.datetime.strptime("2021" + args.season_start, "%Y%m%d")
 dateEnd = datetime.datetime.strptime("2021" + args.season_end, "%Y%m%d")
-# ホークス戦情報取得
-hawksGameInfo = getHawksGameInfo()
 
 print("----- current time: {0} -----".format(datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S")))
 
@@ -49,21 +42,10 @@ try:
         driver.get(getConfig("scheduleUrl").replace("[date]", targetDate.strftime("%Y-%m-%d")))
         commonWait()
 
-        gameElems = util.getElems("gameCards")
-
-        gameNos = []
-        for idx, gameElem in enumerate(gameElems):
-            url = gameElem.get_attribute("href")
-            gameNoArr = re.findall(r'https://baseball.yahoo.co.jp/npb/game/2021(\d+)/index', url)
-            if len(gameNoArr) == 0:
-                print ("not exist gameNo")
-                break
-            gameNos.append(gameNoArr[0])
-
-        for idx, gameNoStr in enumerate(gameNos):
+        for idx, gameNoStr in enumerate(getGameNos(util, targetDate)):
             # 日付ディレクトリ作成
-            pathDate = targetDate.strftime("%Y%m%d")
-            fullPathDate = "/".join([getConfig("pathBase"), pathDate])
+            dateStr = targetDate.strftime("%Y%m%d")
+            fullPathDate = "/".join([getConfig("pathBase"), dateStr])
             if not os.path.exists(fullPathDate):
                 os.mkdir(fullPathDate)
 
@@ -80,12 +62,12 @@ try:
             # ゲーム番号再生成
             gameNo = "0" + gameNo
 
-            fullGamePath = "/".join([getConfig("pathBase"), pathDate, gameNo])
+            fullGamePath = "/".join([getConfig("pathBase"), dateStr, gameNo])
             if not os.path.exists(fullGamePath):
                 os.mkdir(fullGamePath)
 
             # URL一部生成
-            dateGameNo = pathDate + gameNo
+            dateGameNo = dateStr + gameNo
             if targetDate.strftime("%Y") == "2021":
                 # start, end = getLeague2021(targetDate.strftime("%m%d"))
                 # targetDateInfo = range(start, end + 1)
@@ -93,7 +75,8 @@ try:
                 dateGameNo = "2021" + gameNoStr
 
             #「一球速報」に遷移
-            driver.get(getConfig("gameScoreUrl").replace("[dateGameNo]", dateGameNo))
+            scoreUrl = getConfig("gameScoreUrl").replace("npb", "npb_practice") if isTokyoOlympicsPeriod(targetDate) else getConfig("gameScoreUrl")
+            driver.get(scoreUrl.replace("[dateGameNo]", dateGameNo))
             commonWait()
             # メインコンテンツ
             contentMain = driver.find_element_by_css_selector("#contentMain")
@@ -372,22 +355,14 @@ try:
                     with open("{0}/{1}.json".format(fullGamePath, scene), 'w') as f:
                         json.dump(data, f, indent=2, ensure_ascii=False)
 
-                    print("----- [done] "\
-                        "date: {0}, "
-                        "gameNo: {1}, "\
-                        "scene: {2:3d}, "\
-                        "inning: {3}, "\
-                        "{4}アウト, "\
-                        "{5:3.1f}[sec]"\
-                        " -----".format(
-                            pathDate,
-                            gameNo,
-                            scene,
-                            data["liveHeader"]["inning"],
-                            data["liveHeader"]["count"]["o"],
-                            time.time() - startTime
-                        )
-                    )
+                    print("----- [done] date: {0}, gameNo: {1}, scene: {2:3d}, inning: {3}, {4}アウト, {5:3.1f}[sec] -----".format(
+                        dateStr,
+                        gameNo,
+                        scene,
+                        data["liveHeader"]["inning"],
+                        data["liveHeader"]["count"]["o"],
+                        time.time() - startTime
+                    ))
 
                     #「次へ」ボタン押下
                     selectorNextButton = "#replay .next a"
@@ -396,22 +371,14 @@ try:
 
             except TimeoutException as te:
                 print(te)
-                print("----- [error] "\
-                        "date: {0}, "
-                        "gameNo: {1}, "\
-                        "scene: {2:3d}, "\
-                        "inning: {3}, "\
-                        "{4}アウト, "\
-                        "{5:3.1f}[sec]"\
-                        " -----".format(
-                            pathDate,
-                            gameNo,
-                            scene,
-                            data["liveHeader"]["inning"],
-                            data["liveHeader"]["count"]["o"],
-                            time.time() - startTime
-                        )
-                    )
+                print("----- [error] date: {0}, gameNo: {1}, scene: {2:3d}, inning: {3}, {4}アウト, {5:3.1f}[sec] -----".format(
+                    dateStr,
+                    gameNo,
+                    scene,
+                    data["liveHeader"]["inning"],
+                    data["liveHeader"]["count"]["o"],
+                    time.time() - startTime
+                ))
 
         targetDate = targetDate + datetime.timedelta(days=1)
         util = Util(driver)

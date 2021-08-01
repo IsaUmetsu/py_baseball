@@ -11,9 +11,10 @@ from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchElementException
 
 from selector import getSelector
-from config import getConfig, getTeamInitial, getTeamInitialByFullName, getLeague2021, isTokyoOlympicsPeriod
+from config import getConfig, getTeamInitial, getTeamInitialByFullName, isTokyoOlympicsPeriod
 from driver import getChromeDriver, getFirefoxDriver
 from util import Util
+from common import getGameNos, commonWait
 
 parser = argparse.ArgumentParser(prog="blowser", add_help=True)
 parser.add_argument('-ss', '--season-start', type=str, default=datetime.datetime.now().strftime("%m%d"))
@@ -27,9 +28,6 @@ driver = getFirefoxDriver()
 # シーズン開始日設定
 targetDate = datetime.datetime.strptime("2021" + args.season_start, "%Y%m%d")
 dateEnd = datetime.datetime.strptime("2021" + args.season_end, "%Y%m%d")
-
-def commonWait():
-    time.sleep(2)
 
 def createPitchStatsDetail(rows):
     statsTupleList = []
@@ -93,22 +91,7 @@ try:
         driver.get(getConfig("scheduleUrl").replace("[date]", targetDate.strftime("%Y-%m-%d")))
         commonWait()
 
-        gameNos = []
-        # tokyo2020 中断期間か
-        if isTokyoOlympicsPeriod(targetDate):
-            start, end = getLeague2021(targetDate.strftime("%m%d"))
-            for gameNoTmp in range(start, end + 1):
-                gameNos.append("00" + str(gameNoTmp))
-        else:
-            for idx, gameElem in enumerate(util.getElems("gameCards")):
-                url = gameElem.get_attribute("href")
-                gameNoArr = re.findall(r'https://baseball.yahoo.co.jp/npb/game/2021(\d+)/index', url)
-                if len(gameNoArr) == 0:
-                    print ("not exist gameNo")
-                    break
-                gameNos.append(gameNoArr[0])
-
-        for idx, gameNoStr in enumerate(gameNos):
+        for idx, gameNoStr in enumerate(getGameNos(util, targetDate)):
             startTime = time.time()
             # 日付ディレクトリ作成 (pitch)
             dateStr = targetDate.strftime("%Y%m%d")

@@ -11,9 +11,10 @@ from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchElementException
 
 from selector import getSelector
-from config import getConfig, getTeamInitial, getLeague2021
+from config import getConfig, getTeamInitial, getLeague2021, isTokyoOlympicsPeriod
 from driver import getChromeDriver, getFirefoxDriver
 from util import Util
+from common import getGameNos, commonWait
 
 parser = argparse.ArgumentParser(prog="blowser", add_help=True)
 parser.add_argument('-ss', '--season-start', type=str, default=datetime.datetime.now().strftime("%m%d"))
@@ -21,9 +22,6 @@ parser.add_argument('-se', '--season-end', type=str, default=(datetime.datetime.
 parser.add_argument('-s', '--specify', nargs='+', type=str)
 parser.add_argument('-e', '--exclude', nargs='+', type=str)
 args = parser.parse_args()
-
-def commonWait():
-    time.sleep(2)
 
 # driver生成
 driver = getFirefoxDriver()
@@ -40,19 +38,7 @@ try:
         driver.get(getConfig("scheduleUrl").replace("[date]", targetDate.strftime("%Y-%m-%d")))
         commonWait()
 
-        # for gameCard in util.getElems("gameCards"):
-        gameElems = util.getElems("gameCards")
-
-        gameNos = []
-        for idx, gameElem in enumerate(gameElems):
-            url = gameElem.get_attribute("href")
-            gameNoArr = re.findall(r'https://baseball.yahoo.co.jp/npb/game/2021(\d+)/index', url)
-            if len(gameNoArr) == 0:
-                print ("not exist gameNo")
-                break
-            gameNos.append(gameNoArr[0])
-
-        for idx, gameNoStr in enumerate(gameNos):
+        for idx, gameNoStr in enumerate(getGameNos(util, targetDate)):
             # 日付ディレクトリ作成
             pathDate = targetDate.strftime("%Y%m%d")
             fullPathDate = "/".join([getConfig("pathBaseStarter"), pathDate])
@@ -81,7 +67,8 @@ try:
                 dateGameNo = "2021" + gameNoStr
 
             # 指定試合の[トップ]画面へ遷移
-            driver.get(getConfig("gameTopUrl").replace("[dateGameNo]", dateGameNo))
+            topUrl = getConfig("gameTopUrl").replace("npb", "npb_practice") if isTokyoOlympicsPeriod(targetDate) else getConfig("gameTopUrl")
+            driver.get(topUrl.replace("[dateGameNo]", dateGameNo))
             commonWait()
 
             away = "away"
