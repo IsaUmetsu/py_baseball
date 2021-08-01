@@ -11,7 +11,7 @@ from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchElementException
 
 from selector import getSelector
-from config import getConfig, getTeamInitial, getTeamInitialByFullName, getLeague2021
+from config import getConfig, getTeamInitial, getTeamInitialByFullName, getLeague2021, isTokyoOlympicsPeriod
 from driver import getChromeDriver, getFirefoxDriver
 from util import Util
 
@@ -22,46 +22,29 @@ parser.add_argument('-s', '--specify', nargs='+', type=str)
 parser.add_argument('-e', '--exclude', nargs='+', type=str)
 args = parser.parse_args()
 
+# driver生成
+driver = getFirefoxDriver()
+# シーズン開始日設定
+targetDate = datetime.datetime.strptime("2021" + args.season_start, "%Y%m%d")
+dateEnd = datetime.datetime.strptime("2021" + args.season_end, "%Y%m%d")
+
 def commonWait():
     time.sleep(2)
 
 def createPitchStatsDetail(rows):
-    # 試合終了後
-    if len(rows) == 14:
-        return {
-            "result": rows[0].text,
-            "name": rows[1].text,
-            "era": rows[2].text, # earned run average
-            "ip": rows[3].text, # innings pitched
-            "np": rows[4].text, # numbers of pitches
-            "bf": rows[5].text, # batters faced 
-            "ha": rows[6].text, # hits allowed
-            "hra": rows[7].text, # homerun allowed
-            "so": rows[8].text, # strike out
-            "bb": rows[9].text, # bases on balls
-            "hbp": rows[10].text, # hit by pitch
-            "balk": rows[11].text,
-            "ra": rows[12].text, # runs allowed
-            "er": rows[13].text # earned runs
-        }
-    # 試合中
+    statsTupleList = []
+    if isTokyoOlympicsPeriod(targetDate):
+        params = ["name", "ip", "np", "bf", "ha", "hra", "so", "bb", "hbp", "balk", "ra", "er"]
     else:
-        return {
-            "result": "",
-            "name": rows[0].text,
-            "era": rows[1].text, # earned run average
-            "ip": rows[2].text, # innings pitched
-            "np": rows[3].text, # numbers of pitches
-            "bf": rows[4].text, # batters faced 
-            "ha": rows[5].text, # hits allowed
-            "hra": rows[6].text, # homerun allowed
-            "so": rows[7].text, # strike out
-            "bb": rows[8].text, # bases on balls
-            "hbp": rows[9].text, # hit by pitch
-            "balk": rows[10].text,
-            "ra": rows[11].text, # runs allowed
-            "er": rows[12].text # earned runs
-        }
+        if len(rows) == 14: # 試合終了後
+            params = ["result", "name", "era", "ip", "np", "bf", "ha", "hra", "so", "bb", "hbp", "balk", "ra", "er"]
+        else: # 試合中
+            statsTupleList.append(("result", "")) # 結果は未定であるため空欄で設定
+            params = ["name", "era", "ip", "np", "bf", "ha", "hra", "so", "bb", "hbp", "balk", "ra", "er"]
+    
+    for idx, param in enumerate(params):
+        statsTupleList.append((param, rows[idx].text))
+    return dict(statsTupleList)
 
 def createPitchStats(pitchStatusElem):
     pitchStats = []
@@ -71,36 +54,17 @@ def createPitchStats(pitchStatusElem):
     return pitchStats
 
 def createBatStatsDetail(cols):
-    data = {
-        "position": cols[0].text,
-        "name": cols[1].text,
-        "ave": cols[2].text, # average
-        "ab": cols[3].text, # at bat
-        "run": cols[4].text,
-        "hit": cols[5].text,
-        "rbi": cols[6].text, # numbers of pitches
-        "so": cols[7].text, # batters faced 
-        "bb": cols[8].text, # hits allowed
-        "hbp": cols[9].text, # homerun allowed
-        "sh": cols[10].text, # sacrifice hits
-        "sb": cols[11].text, # stolen bases
-        "e": cols[12].text, # error
-        "hr": cols[13].text,
-        "ing1": cols[14].text,
-        "ing2": cols[15].text,
-        "ing3": cols[16].text,
-        "ing4": cols[17].text,
-        "ing5": cols[18].text,
-        "ing6": cols[19].text,
-        "ing7": cols[20].text,
-        "ing8": cols[21].text,
-        "ing9": cols[22].text
-    }
-
+    statsTupleList = []
+    if isTokyoOlympicsPeriod(targetDate):
+        params = ["position", "name", "ab", "run", "hit", "rbi", "so", "bb", "hbp", "sh", "sb", "e", "hr", "ing1", "ing2", "ing3", "ing4", "ing5", "ing6", "ing7", "ing8", "ing9"]
+    else:
+        params = ["position", "name", "ave", "ab", "run", "hit", "rbi", "so", "bb", "hbp", "sh", "sb", "e", "hr", "ing1", "ing2", "ing3", "ing4", "ing5", "ing6", "ing7", "ing8", "ing9"]
     if len(cols) > 23:
-        data["ing10"] = cols[23].text
+        params.append("ing10")
 
-    return data
+    for idx, param in enumerate(params):
+        statsTupleList.append((param, cols[idx].text))
+    return dict(statsTupleList)
 
 def createBatStats(statusElems):
     stats = []
@@ -111,29 +75,14 @@ def createBatStats(statusElems):
     return stats
 
 def createScoreBoard(scoreBoardElems):
-    scoreBoard = {
-        "total": scoreBoardElems[0].text,
-        "ing1": scoreBoardElems[1].text,
-        "ing2": scoreBoardElems[2].text,
-        "ing3": scoreBoardElems[3].text,
-        "ing4": scoreBoardElems[4].text,
-        "ing5": scoreBoardElems[5].text,
-        "ing6": scoreBoardElems[6].text,
-        "ing7": scoreBoardElems[7].text,
-        "ing8": scoreBoardElems[8].text,
-        "ing9": scoreBoardElems[9].text
-    }
-
+    scoreBoardTupleList = []
+    params = ["total", "ing1", "ing2", "ing3", "ing4", "ing5", "ing6", "ing7", "ing8", "ing9"]
     if len(scoreBoardElems) > 10:
-        scoreBoard["ing10"] = scoreBoardElems[10].text
+        params.append("ing10")
 
-    return scoreBoard
-
-# driver生成
-driver = getFirefoxDriver()
-# シーズン開始日設定
-targetDate = datetime.datetime.strptime("2021" + args.season_start, "%Y%m%d")
-dateEnd = datetime.datetime.strptime("2021" + args.season_end, "%Y%m%d")
+    for idx, param in enumerate(params):
+        scoreBoardTupleList.append((param, scoreBoardElems[idx].text))
+    return dict(scoreBoardTupleList)
 
 print("----- current time: {0} -----".format(datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S")))
 
@@ -144,23 +93,26 @@ try:
         driver.get(getConfig("scheduleUrl").replace("[date]", targetDate.strftime("%Y-%m-%d")))
         commonWait()
 
-        # for gameCard in util.getElems("gameCards"):
-        gameElems = util.getElems("gameCards")
-
         gameNos = []
-        for idx, gameElem in enumerate(gameElems):
-            url = gameElem.get_attribute("href")
-            gameNoArr = re.findall(r'https://baseball.yahoo.co.jp/npb/game/2021(\d+)/index', url)
-            if len(gameNoArr) == 0:
-                print ("not exist gameNo")
-                break
-            gameNos.append(gameNoArr[0])
+        # tokyo2020 中断期間か
+        if isTokyoOlympicsPeriod(targetDate):
+            start, end = getLeague2021(targetDate.strftime("%m%d"))
+            for gameNoTmp in range(start, end + 1):
+                gameNos.append("00" + str(gameNoTmp))
+        else:
+            for idx, gameElem in enumerate(util.getElems("gameCards")):
+                url = gameElem.get_attribute("href")
+                gameNoArr = re.findall(r'https://baseball.yahoo.co.jp/npb/game/2021(\d+)/index', url)
+                if len(gameNoArr) == 0:
+                    print ("not exist gameNo")
+                    break
+                gameNos.append(gameNoArr[0])
 
         for idx, gameNoStr in enumerate(gameNos):
             startTime = time.time()
             # 日付ディレクトリ作成 (pitch)
-            pathDate = targetDate.strftime("%Y%m%d")
-            fullPathDate = "/".join([getConfig("pathPitcherStats"), pathDate])
+            dateStr = targetDate.strftime("%Y%m%d")
+            fullPathDate = "/".join([getConfig("pathPitcherStats"), dateStr])
             if not os.path.exists(fullPathDate):
                 os.mkdir(fullPathDate)
 
@@ -178,7 +130,7 @@ try:
             gameNo = "0" + gameNo
 
             # URL一部分作成
-            dateGameNo = pathDate + gameNo
+            dateGameNo = dateStr + gameNo
             if targetDate.strftime("%Y") == "2021":
                 # start, end = getLeague2021(targetDate.strftime("%m%d"))
                 # targetDateInfo = range(start, end + 1)
@@ -186,14 +138,16 @@ try:
                 dateGameNo = "2021" + gameNoStr
 
             # 指定試合の[トップ]画面へ遷移
-            driver.get(getConfig("gameTopUrl").replace("[dateGameNo]", dateGameNo))
+            topUrl = getConfig("gameTopUrl").replace("npb", "npb_practice") if isTokyoOlympicsPeriod(targetDate) else getConfig("gameTopUrl")
+            driver.get(topUrl.replace("[dateGameNo]", dateGameNo))
             commonWait()
 
             gameState = driver.find_element_by_css_selector(getSelector("gameState")).text
             isFinished = gameState in ["試合終了", "試合中止", "ノーゲーム"]
 
             # 指定試合の[出場成績]画面へ遷移
-            driver.get(getConfig("gameStatsUrl").replace("[dateGameNo]", dateGameNo))
+            statsUrl = getConfig("gameStatsUrl").replace("npb", "npb_practice") if isTokyoOlympicsPeriod(targetDate) else getConfig("gameStatsUrl")
+            driver.get(statsUrl.replace("[dateGameNo]", dateGameNo))
             commonWait()
 
             contentMain = driver.find_element_by_css_selector("#gm_stats")
@@ -214,15 +168,14 @@ try:
                 json.dump(data, f, indent=2, ensure_ascii=False)
             
             print("----- [done][pitch] date: {0}, gameNo: {1}, {2} vs {3}, {4:3.1f}[sec] -----".format(
-                    pathDate, gameNo, awayTeam, homeTeam, time.time() - startTime))
+                    dateStr, gameNo, awayTeam, homeTeam, time.time() - startTime))
 
             ### bat
             startTime = time.time()
             # 日付ディレクトリ作成 (bat)
-            fullPathDate = "/".join([getConfig("pathBatterStats"), pathDate])
+            fullPathDate = "/".join([getConfig("pathBatterStats"), dateStr])
             if not os.path.exists(fullPathDate):
                 os.mkdir(fullPathDate)
-
             # bat stats
             awayBatStats = createBatStats(util.getElems("awayBatStats"))
             homeBatStats = createBatStats(util.getElems("homeBatStats"))
@@ -236,19 +189,18 @@ try:
             # save as json
             with open("{0}/{1}.json".format(fullPathDate, gameNo), 'w') as f:
                 json.dump(data, f, indent=2, ensure_ascii=False)
-            
             print("----- [done]  [bat] date: {0}, gameNo: {1}, {2} vs {3}, {4:3.1f}[sec] -----".format(
-                    pathDate, gameNo, awayTeam, homeTeam, time.time() - startTime))
+                    dateStr, gameNo, awayTeam, homeTeam, time.time() - startTime))
 
             ### text
             startTime = time.time()
             # 日付ディレクトリ作成
-            pathDate = targetDate.strftime("%Y%m%d")
-            fullPathDate = "/".join([getConfig("pathTextStats"), pathDate])
+            fullPathDate = "/".join([getConfig("pathTextStats"), dateStr])
             if not os.path.exists(fullPathDate):
                 os.mkdir(fullPathDate)
             # 指定試合の[テキスト速報]画面へ遷移
-            driver.get(getConfig("gameTextUrl").replace("[dateGameNo]", dateGameNo))
+            textUrl = getConfig("gameTextUrl").replace("npb", "npb_practice") if isTokyoOlympicsPeriod(targetDate) else getConfig("gameTextUrl")
+            driver.get(textUrl.replace("[dateGameNo]", dateGameNo))
             commonWait()
             # 範囲限定
             contentMain = driver.find_element_by_css_selector("#text_live")
@@ -279,9 +231,8 @@ try:
             # save as json
             with open("{0}/{1}.json".format(fullPathDate, gameNo), 'w') as f:
                 json.dump(data, f, indent=2, ensure_ascii=False)
-            
             print("----- [done] [text] date: {0}, gameNo: {1}, {2} vs {3}, {4:3.1f}[sec] -----".format(
-                    pathDate, gameNo, awayTeam, homeTeam, time.time() - startTime))
+                    dateStr, gameNo, awayTeam, homeTeam, time.time() - startTime))
 
         targetDate = targetDate + datetime.timedelta(days=1)
 
