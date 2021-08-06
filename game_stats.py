@@ -125,8 +125,14 @@ try:
             driver.get(topUrl.replace("[dateGameNo]", dateGameNo))
             commonWait()
 
-            gameState = driver.find_element_by_css_selector(getSelector("gameState")).text
-            isFinished = gameState in ["試合終了", "試合中止", "ノーゲーム"]
+            gameState = ""
+            isFinished = False
+            try:
+                gameState = driver.find_element_by_css_selector(getSelector("gameState")).text
+                isFinished = gameState in ["試合終了", "試合中止", "ノーゲーム"]
+            except:
+                print("----- not found game page: {0} -----".format(gameNoStr))
+                continue
 
             # 指定試合の[出場成績]画面へ遷移
             statsUrl = getConfig("gameStatsUrl").replace("npb", "npb_practice") if isTokyoOlympicsPeriod(targetDate) else getConfig("gameStatsUrl")

@@ -79,7 +79,12 @@ try:
             driver.get(scoreUrl.replace("[dateGameNo]", dateGameNo))
             commonWait()
             # メインコンテンツ
-            contentMain = driver.find_element_by_css_selector("#contentMain")
+            contentMain = ""
+            try:
+                contentMain = driver.find_element_by_css_selector("#contentMain")
+            except:
+                print("----- not found game page: {0} -----".format(gameNoStr))
+                continue
 
             # ユーティリティ再定義 (対象セレクタを限定させる (driver → contentMain))
             util = Util(contentMain)
