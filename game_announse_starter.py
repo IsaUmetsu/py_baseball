@@ -82,12 +82,7 @@ try:
             away = "away"
             home = "home"
             util = Util(driver)
-            startTime = ""
-            try:
-                startTime = util.getText("startTime")
-            except:
-                print("----- not found game gameNo: {0}, page: {1} -----".format(gameNo, gameNoStr))
-                continue
+            startTime = startTime = util.getText("startTime")
 
             try:
                 try:
@@ -132,9 +127,14 @@ try:
                     print("----- [done] date: {0}, gameNo: {1}, {2} vs {3} -----".format(pathDate, gameNo, away, home))
 
             except NoSuchElementException as e:
+                gameTitleSpanArray = []
                 # 試合中止時
-                gameTitleSpan = driver.find_element_by_css_selector(getSelector("gameTitleSpan")).text
-                gameTitleSpanArray = gameTitleSpan.split(" ")
+                try:
+                    gameTitleSpan = driver.find_element_by_css_selector(getSelector("gameTitleSpan")).text
+                    gameTitleSpanArray = gameTitleSpan.split(" ")
+                except:
+                    print("----- not found game gameNo: {0}, page: {1} -----".format(gameNo, gameNoStr))
+                    continue
 
                 away = getTeamInitial(gameTitleSpanArray[2])
                 home = getTeamInitial(gameTitleSpanArray[0])
