@@ -9,9 +9,9 @@ def getGameNos(util, targetDate):
     gameNos = []
     # tokyo2020 中断期間か
     if isTokyoOlympicsPeriod(targetDate):
-        start, end = getLeague2021(targetDate.strftime("%m%d"))
-        for gameNoTmp in range(start, end + 1):
-            gameNos.append("00" + str(gameNoTmp))
+            start, end = getLeague2021(targetDate.strftime("%m%d"))
+            for gameNoTmp in range(start, end + 1):
+                gameNos.append("00" + str(gameNoTmp))
     else:
         for idx, gameElem in enumerate(util.getElems("gameCards")):
             url = gameElem.get_attribute("href")

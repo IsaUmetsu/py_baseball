@@ -42,7 +42,15 @@ try:
         driver.get(getConfig("scheduleUrl").replace("[date]", targetDate.strftime("%Y-%m-%d")))
         commonWait()
 
-        for idx, gameNoStr in enumerate(getGameNos(util, targetDate)):
+        gameNos = []
+        try:
+            gameNos = getGameNos(util, targetDate)
+        except KeyError:
+            print ("not exist gameNo, date: {0}".format(targetDate.strftime("%m%d")))
+            targetDate = targetDate + datetime.timedelta(days=1)
+            continue
+
+        for idx, gameNoStr in enumerate(gameNos):
             # 日付ディレクトリ作成
             dateStr = targetDate.strftime("%Y%m%d")
             fullPathDate = "/".join([getConfig("pathBase"), dateStr])
@@ -83,7 +91,7 @@ try:
             try:
                 contentMain = driver.find_element_by_css_selector("#contentMain")
             except:
-                print("----- not found game page: {0} -----".format(gameNoStr))
+                print("----- not found game gameNo: {0}, page: {1} -----".format(gameNo, gameNoStr))
                 continue
 
             # ユーティリティ再定義 (対象セレクタを限定させる (driver → contentMain))

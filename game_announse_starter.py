@@ -38,7 +38,15 @@ try:
         driver.get(getConfig("scheduleUrl").replace("[date]", targetDate.strftime("%Y-%m-%d")))
         commonWait()
 
-        for idx, gameNoStr in enumerate(getGameNos(util, targetDate)):
+        gameNos = []
+        try:
+            gameNos = getGameNos(util, targetDate)
+        except KeyError:
+            print ("not exist gameNo, date: {0}".format(targetDate.strftime("%m%d")))
+            targetDate = targetDate + datetime.timedelta(days=1)
+            continue
+
+        for idx, gameNoStr in enumerate(getGameNos):
             # 日付ディレクトリ作成
             pathDate = targetDate.strftime("%Y%m%d")
             fullPathDate = "/".join([getConfig("pathBaseStarter"), pathDate])
@@ -74,7 +82,12 @@ try:
             away = "away"
             home = "home"
             util = Util(driver)
-            startTime = util.getText("startTime")
+            startTime = ""
+            try:
+                startTime = util.getText("startTime")
+            except:
+                print("----- not found game gameNo: {0}, page: {1} -----".format(gameNo, gameNoStr))
+                continue
 
             try:
                 try:

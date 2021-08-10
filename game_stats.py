@@ -91,7 +91,15 @@ try:
         driver.get(getConfig("scheduleUrl").replace("[date]", targetDate.strftime("%Y-%m-%d")))
         commonWait()
 
-        for idx, gameNoStr in enumerate(getGameNos(util, targetDate)):
+        gameNos = []
+        try:
+            gameNos = getGameNos(util, targetDate)
+        except KeyError:
+            print ("not exist gameNo, date: {0}".format(targetDate.strftime("%m%d")))
+            targetDate = targetDate + datetime.timedelta(days=1)
+            continue
+
+        for idx, gameNoStr in enumerate(gameNos):
             startTime = time.time()
             # 日付ディレクトリ作成 (pitch)
             dateStr = targetDate.strftime("%Y%m%d")
@@ -131,7 +139,7 @@ try:
                 gameState = driver.find_element_by_css_selector(getSelector("gameState")).text
                 isFinished = gameState in ["試合終了", "試合中止", "ノーゲーム"]
             except:
-                print("----- not found game page: {0} -----".format(gameNoStr))
+                print("----- not found game gameNo: {0}, page: {1} -----".format(gameNo, gameNoStr))
                 continue
 
             # 指定試合の[出場成績]画面へ遷移
