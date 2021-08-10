@@ -46,7 +46,7 @@ try:
             targetDate = targetDate + datetime.timedelta(days=1)
             continue
 
-        for idx, gameNoStr in enumerate(getGameNos):
+        for idx, gameNoStr in enumerate(gameNos):
             # 日付ディレクトリ作成
             pathDate = targetDate.strftime("%Y%m%d")
             fullPathDate = "/".join([getConfig("pathBaseStarter"), pathDate])
