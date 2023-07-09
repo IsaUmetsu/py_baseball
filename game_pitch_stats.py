@@ -14,6 +14,7 @@ from selector import getSelector
 from config import getConfig, getTeamInitial, getTeamInitialByFullName, getOpen2021
 from driver import getChromeDriver, getFirefoxDriver
 from util import Util
+from common import getGameNos, commonWait
 
 parser = argparse.ArgumentParser(prog="blowser", add_help=True)
 parser.add_argument('-ss', '--season-start', type=str, default=datetime.datetime.now().strftime("%m%d"))
@@ -21,9 +22,6 @@ parser.add_argument('-se', '--season-end', type=str, default=datetime.datetime.n
 parser.add_argument('-s', '--specify', nargs='+', type=str)
 parser.add_argument('-e', '--exclude', nargs='+', type=str)
 args = parser.parse_args()
-
-def commonWait():
-    time.sleep(2)
 
 def createPitchStatsDetail(rows):
     # 試合終了後
@@ -73,8 +71,8 @@ def createPitchStats(pitchStatusElem):
 # driver生成
 driver = getFirefoxDriver()
 # シーズン開始日設定
-targetDate = datetime.datetime.strptime("2021" + args.season_start, "%Y%m%d")
-dateEnd = datetime.datetime.strptime("2021" + args.season_end, "%Y%m%d")
+targetDate = datetime.datetime.strptime("2023" + args.season_start, "%Y%m%d")
+dateEnd = datetime.datetime.strptime("2023" + args.season_end, "%Y%m%d")
 
 print("----- current time: {0} -----".format(datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S")))
 
@@ -85,10 +83,15 @@ try:
         driver.get(getConfig("scheduleUrl").replace("[date]", targetDate.strftime("%Y-%m-%d")))
         commonWait()
 
-        # for gameCard in util.getElems("gameCards"):
-        gameElems = util.getElems("gameCards")
+        gameNos = []
+        try:
+            gameNos = getGameNos(util, targetDate)
+        except KeyError:
+            print ("not exist gameNo, date: {0}".format(targetDate.strftime("%m%d")))
+            targetDate = targetDate + datetime.timedelta(days=1)
+            continue
 
-        for gameCnt in range(len(gameElems)):
+        for idx, gameNoStr in enumerate(gameNos):
             startTime = time.time()
             # 日付ディレクトリ作成
             pathDate = targetDate.strftime("%Y%m%d")
@@ -110,7 +113,7 @@ try:
             # gameNo = '0' + gameNo
 
             # ゲーム番号生成
-            gameNo = str(gameCnt + 1)
+            gameNo = str(idx + 1)
             # 特定試合 指定時
             if args.specify:
                 if gameNo not in args.specify:
@@ -122,26 +125,31 @@ try:
             # ゲーム番号再生成
             gameNo = "0" + gameNo
 
+            # URL一部分作成 (2023年もURLは2021のままのため)
+            dateGameNo = "2021" + gameNoStr
+
             # 指定試合の[トップ]画面へ遷移
             # driver.get(getConfig("gameTopUrl").replace("[dateGameNo]", targetDate.strftime("%Y%m%d") + gameNo))
             if datetime.datetime.strptime("20210302", "%Y%m%d") <= targetDate and targetDate <= datetime.datetime.strptime("20210325", "%Y%m%d"):
                 targetDateInfo = getOpen2021(targetDate.strftime("%m%d"))
-                driver.get(getConfig("gameTopUrl").replace("[dateGameNo]", "20210000" + targetDateInfo[gameCnt]))
+                # driver.get(getConfig("gameTopUrl").replace("[dateGameNo]", "20210000" + targetDateInfo[gameCnt]))
             else:
-                driver.get(getConfig("gameTopUrl").replace("[dateGameNo]", pathDate + gameNo))
+                driver.get(getConfig("gameTopUrl").replace("[dateGameNo]", dateGameNo))
 
             commonWait()
 
-            gameState = driver.find_element_by_css_selector(getSelector("gameState")).text
+            gameStateElem = driver.find_element_by_css_selector(getSelector("gameState"))
+            gameState = gameStateElem.get_attribute("textContent")
+            gameState.strip()
             isFinished = gameState in ["試合終了", "試合中止", "ノーゲーム"]
 
             # 指定試合の[出場成績]画面へ遷移
             # driver.get(getConfig("gameStatsUrl").replace("[dateGameNo]", targetDate.strftime("%Y%m%d") + gameNo))
             if datetime.datetime.strptime("20210302", "%Y%m%d") <= targetDate and targetDate <= datetime.datetime.strptime("20210325", "%Y%m%d"):
                 targetDateInfo = getOpen2021(targetDate.strftime("%m%d"))
-                driver.get(getConfig("gameStatsUrl").replace("[dateGameNo]", "20210000" + targetDateInfo[gameCnt]))
+                # driver.get(getConfig("gameStatsUrl").replace("[dateGameNo]", "20210000" + targetDateInfo[gameCnt]))
             else:
-                driver.get(getConfig("gameStatsUrl").replace("[dateGameNo]", pathDate + gameNo))
+                driver.get(getConfig("gameStatsUrl").replace("[dateGameNo]", dateGameNo))
 
             commonWait()
 

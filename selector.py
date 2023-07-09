@@ -6,7 +6,7 @@ selectorList = {
     "gameCardsAwayTeam": ".bb-score__team p:nth-child(2)",
 
     ### トップ
-    "gameState": "#gm_brd .bb-gameDetail .bb-gameTeam__score .bb-gameCard__detail .bb-gameCard__state",
+    "gameState": "#gm_brd .bb-gameDetail .bb-gameTeam__score .bb-gameCard__state", # from 2023
     "startTime": "#gm_brd .bb-gameCard .bb-gameDescription time",
     "awayTeam": "#gm_recen .bb-gameCard__readMore .bb-gameCard__readMoreItem:nth-child(2) span",
     "homeTeam": "#gm_recen .bb-gameCard__readMore .bb-gameCard__readMoreItem:nth-child(1) span",
@@ -16,7 +16,7 @@ selectorList = {
     "homeTeamPast": "#ing_brd tbody tr:nth-child(2) td:nth-child(1)",
     "awayStartPitcherPast": "#strt_mem section .bb-splits__item:nth-child(2) table:nth-child(2) tbody tr td:nth-child(3)",
     "homeStartPitcherPast": "#strt_mem section .bb-splits__item:nth-child(1) table:nth-child(2) tbody tr td:nth-child(3)",
-    "gameTitleSpan": "#gm_menu section span",
+    "gameTitleSpan": "#gm_menu section header h1 span", # from 2023
 
     ## テキスト速報
     "batResult": "#text_live .bb-liveText",

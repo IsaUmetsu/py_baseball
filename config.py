@@ -139,3 +139,6 @@ def getLeague2021(date):
 def isTokyoOlympicsPeriod(targetDate):
     dateStr = targetDate.strftime("%Y%m%d")
     return dateStr >= "20210718" and dateStr <= "20210812"
+
+def getOpen2021():
+    return []

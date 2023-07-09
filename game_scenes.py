@@ -31,8 +31,8 @@ def getInningSelector(inning, topBtm):
 driver = getFirefoxDriver()
 util = Util(driver)
 # シーズン開始日設定
-targetDate = datetime.datetime.strptime("2022" + args.season_start, "%Y%m%d")
-dateEnd = datetime.datetime.strptime("2022" + args.season_end, "%Y%m%d")
+targetDate = datetime.datetime.strptime("2023" + args.season_start, "%Y%m%d")
+dateEnd = datetime.datetime.strptime("2023" + args.season_end, "%Y%m%d")
 
 print("----- current time: {0} -----".format(datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S")))
 
@@ -74,7 +74,7 @@ try:
             if not os.path.exists(fullGamePath):
                 os.mkdir(fullGamePath)
 
-            # URL一部分作成 (2022年もURLは2021のままのため)
+            # URL一部分作成 (2023年もURLは2021のままのため)
             dateGameNo = "2021" + gameNoStr
 
             #「一球速報」に遷移

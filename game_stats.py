@@ -26,8 +26,8 @@ args = parser.parse_args()
 # driver生成
 driver = getFirefoxDriver()
 # シーズン開始日設定
-targetDate = datetime.datetime.strptime("2022" + args.season_start, "%Y%m%d")
-dateEnd = datetime.datetime.strptime("2022" + args.season_end, "%Y%m%d")
+targetDate = datetime.datetime.strptime("2023" + args.season_start, "%Y%m%d")
+dateEnd = datetime.datetime.strptime("2023" + args.season_end, "%Y%m%d")
 
 def createPitchStatsDetail(rows):
     statsTupleList = []
@@ -120,7 +120,7 @@ try:
             # ゲーム番号再生成
             gameNo = "0" + gameNo
 
-            # URL一部分作成 (2022年もURLは2021のままのため)
+            # URL一部分作成 (2023年もURLは2021のままのため)
             dateGameNo = "2021" + gameNoStr
 
             # 指定試合の[トップ]画面へ遷移
@@ -131,7 +131,9 @@ try:
             gameState = ""
             isFinished = False
             try:
-                gameState = driver.find_element_by_css_selector(getSelector("gameState")).text
+                gameStateElem = driver.find_element_by_css_selector(getSelector("gameState"))
+                gameState = gameStateElem.get_attribute("textContent")
+                gameState.strip()
                 isFinished = gameState in ["試合終了", "試合中止", "ノーゲーム"]
             except:
                 print("----- not found game gameNo: {0}, page: {1} -----".format(gameNo, gameNoStr))

@@ -26,8 +26,8 @@ args = parser.parse_args()
 # driver生成
 driver = getFirefoxDriver()
 # シーズン開始日設定
-targetDate = datetime.datetime.strptime("2022" + args.season_start, "%Y%m%d")
-dateEnd = datetime.datetime.strptime("2022" + args.season_end, "%Y%m%d")
+targetDate = datetime.datetime.strptime("2023" + args.season_start, "%Y%m%d")
+dateEnd = datetime.datetime.strptime("2023" + args.season_end, "%Y%m%d")
 
 print("----- current time: {0} -----".format(datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S")))
 
@@ -71,7 +71,8 @@ try:
 
             # 指定試合の[トップ]画面へ遷移
             topUrl = getConfig("gameTopUrl").replace("npb", "npb_practice") if isTokyoOlympicsPeriod(targetDate) else getConfig("gameTopUrl")
-            driver.get(topUrl.replace("[dateGameNo]", dateGameNo))
+            topUrlEdit = topUrl.replace("[dateGameNo]", dateGameNo)
+            driver.get(topUrlEdit)
             commonWait()
 
             away = "away"
@@ -125,13 +126,15 @@ try:
                 gameTitleSpanArray = []
                 # 試合中止時
                 try:
-                    gameTitleSpan = driver.find_element_by_css_selector(getSelector("gameTitleSpan")).text
-                    gameTitleSpanArray = gameTitleSpan.split(" ")
+                    gameTitleSpanElem = driver.find_element_by_css_selector(getSelector("gameTitleSpan"))
+                    gameTitleSpan = gameTitleSpanElem.get_attribute("textContent")
+                    # gameTitleSpanArray = gameTitleSpan.split(" ")# to 2022
+                    gameTitleSpanArray = gameTitleSpan.split(" vs. ")# from 2023
                 except:
                     print("----- not found game gameNo: {0}, page: {1} -----".format(gameNo, gameNoStr))
                     continue
 
-                away = getTeamInitial(gameTitleSpanArray[2])
+                away = getTeamInitial(gameTitleSpanArray[1]) # from 2023
                 home = getTeamInitial(gameTitleSpanArray[0])
 
                 data = { "start": startTime, "away": { "team": away }, "home": { "team": home } }
