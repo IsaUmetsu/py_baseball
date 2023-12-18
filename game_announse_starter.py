@@ -130,8 +130,9 @@ try:
                     gameTitleSpan = gameTitleSpanElem.get_attribute("textContent")
                     # gameTitleSpanArray = gameTitleSpan.split(" ")# to 2022
                     gameTitleSpanArray = gameTitleSpan.split(" vs. ")# from 2023
-                except:
-                    print("----- not found game gameNo: {0}, page: {1} -----".format(gameNo, gameNoStr))
+                except Exception as e:
+                    print("----- not found game, because pending, gameNo: {0}, page: {1} -----".format(gameNo, gameNoStr))
+                    print(e)
                     continue
 
                 away = getTeamInitial(gameTitleSpanArray[1]) # from 2023

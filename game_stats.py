@@ -149,6 +149,12 @@ try:
 
             awayTeam = getTeamInitialByFullName(util.getText("awayTeamFullName"))
             homeTeam = getTeamInitialByFullName(util.getText("homeTeamFullName"))
+            # ソフトバンク戦以外は一旦除外 (23/9/23追記)
+            # if awayTeam != 'H' and homeTeam != 'H':
+            # ソフトバンク戦は一旦除外 (23/9/24追記)
+            # if awayTeam == 'H' or homeTeam == 'H':
+                # print("----- skip game: {0}, away {1} vs {2} home -----".format(gameNo, awayTeam, homeTeam))
+                # continue
             # pitch stats
             awayPitchStats = createPitchStats(util.getElems("awayPitchStats"))
             homePitchStats = createPitchStats(util.getElems("homePitchStats"))

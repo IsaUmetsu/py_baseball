@@ -29,7 +29,9 @@ def getTeamInitial(team):
         "西武": "L",
         "オリックス": "B",
         "ロッテ": "M",
-        "日本ハム": "F"
+        "日本ハム": "F",
+        "全パ": "AP",
+        "全セ": "AS"
     }
     return teamInitial[team]
 

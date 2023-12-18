@@ -91,6 +91,14 @@ try:
 
             # ユーティリティ再定義 (対象セレクタを限定させる (driver → contentMain))
             util = Util(contentMain)
+            teamInitialAway = util.getText("teamInitialAway")
+            teamInitialHome = util.getText("teamInitialHome")
+            # ソフトバンク戦以外は一旦除外 (23/9/23追記)
+            # if teamInitialAway != 'ソ' and teamInitialHome != 'ソ':
+            # # ソフトバンク戦は一旦除外 (23/9/24追記)
+            # if teamInitialAway == 'ソ' or teamInitialHome == 'ソ':
+            #     print("----- skip game: {0}, away {1} vs {2} home -----".format(gameNo, teamInitialAway, teamInitialHome))
+            #     continue
             # 一球速報 初期遷移時のイニング
             currentInningTopBtm = util.getText("inning")
             print("----- game: {0}, currentInningTopBtm: {1} -----".format(gameNo, currentInningTopBtm))
@@ -187,11 +195,11 @@ try:
                     data["liveHeader"] = {
                         "inning": util.getText("inning"),
                         "away": {
-                            "teamInitial": util.getText("teamInitialAway"),
+                            "teamInitial": teamInitialAway,
                             "currentScore": util.getText("currentScoreAway")
                         },
                         "home": {
-                            "teamInitial": util.getText("teamInitialHome"),
+                            "teamInitial": teamInitialHome,
                             "currentScore": util.getText("currentScoreHome")
                         },
                         "count": {
