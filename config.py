@@ -1,6 +1,6 @@
 def getConfig(key):
     config = {
-        "scheduleUrl": "https://baseball.yahoo.co.jp/npb/schedule/?date=[date]",
+        "scheduleUrl": "https://baseball.yahoo.co.jp/npb/schedule/?date=[date]&gameKindIds=5",
         "gameScoreUrl": "https://baseball.yahoo.co.jp/npb/game/[dateGameNo]/score",
         "gameTopUrl": "https://baseball.yahoo.co.jp/npb/game/[dateGameNo]/top",
         "gameStatsUrl": "https://baseball.yahoo.co.jp/npb/game/[dateGameNo]/stats",
