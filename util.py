@@ -1,4 +1,5 @@
 import re
+import datetime
 from selenium.common.exceptions import NoSuchElementException
 
 from selector import getSelector
@@ -56,3 +57,9 @@ class Util:
         indexUrlRegex = getConfig('gameIndexUrl').replace('[dateGameNo]', pathDate + '0(\d)')
         searchResult = re.findall(indexUrlRegex, gameCard.get_attribute('href'))
         return searchResult[0] if len(searchResult) > 0 else ''
+
+    def getDateInfo(args):
+        thisyear = datetime.date.today().strftime("%Y")
+        targetDate = datetime.datetime.strptime(thisyear + args.season_start, "%Y%m%d")
+        dateEnd = datetime.datetime.strptime(thisyear + args.season_end, "%Y%m%d")
+        return targetDate, dateEnd

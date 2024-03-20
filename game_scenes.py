@@ -30,9 +30,7 @@ def getInningSelector(inning, topBtm):
 # driver生成
 driver = getFirefoxDriver()
 util = Util(driver)
-# シーズン開始日設定
-targetDate = datetime.datetime.strptime("2023" + args.season_start, "%Y%m%d")
-dateEnd = datetime.datetime.strptime("2023" + args.season_end, "%Y%m%d")
+targetDate, dateEnd = util.getDateInfo(args)
 
 print("----- current time: {0} -----".format(datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S")))
 
