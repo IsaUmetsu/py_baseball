@@ -5,7 +5,6 @@ from collections import OrderedDict
 import pprint
 import datetime
 import os
-import argparse
 
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchElementException
@@ -16,16 +15,10 @@ from driver import getChromeDriver, getFirefoxDriver
 from util import Util
 from common import getGameNos, commonWait
 
-parser = argparse.ArgumentParser(prog="blowser", add_help=True)
-parser.add_argument('-ss', '--season-start', type=str, default=datetime.datetime.now().strftime("%m%d"))
-parser.add_argument('-se', '--season-end', type=str, default=(datetime.datetime.now() + datetime.timedelta(days=1)).strftime("%m%d"))
-parser.add_argument('-s', '--specify', nargs='+', type=str)
-parser.add_argument('-e', '--exclude', nargs='+', type=str)
-args = parser.parse_args()
-
 # driver生成
 driver = getFirefoxDriver()
 util = Util(driver)
+args = util.parseArgs()
 # シーズン開始日設定
 targetDate, dateEnd = util.getDateInfo(args)
 

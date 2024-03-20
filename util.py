@@ -1,5 +1,6 @@
 import re
 import datetime
+import argparse
 from selenium.common.exceptions import NoSuchElementException
 
 from selector import getSelector
@@ -57,6 +58,14 @@ class Util:
         indexUrlRegex = getConfig('gameIndexUrl').replace('[dateGameNo]', pathDate + '0(\d)')
         searchResult = re.findall(indexUrlRegex, gameCard.get_attribute('href'))
         return searchResult[0] if len(searchResult) > 0 else ''
+
+    def parseArgs(self):
+        parser = argparse.ArgumentParser(prog="blowser", add_help=True)
+        parser.add_argument('-ss', '--season-start', type=str, default=datetime.datetime.now().strftime("%m%d"))
+        parser.add_argument('-se', '--season-end', type=str, default=datetime.datetime.now().strftime("%m%d"))
+        parser.add_argument('-s', '--specify', nargs='+', type=str)
+        parser.add_argument('-e', '--exclude', nargs='+', type=str)
+        return parser.parse_args()
 
     def getDateInfo(self, args):
         thisyear = datetime.date.today().strftime("%Y")
