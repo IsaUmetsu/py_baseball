@@ -58,7 +58,7 @@ class Util:
         searchResult = re.findall(indexUrlRegex, gameCard.get_attribute('href'))
         return searchResult[0] if len(searchResult) > 0 else ''
 
-    def getDateInfo(args):
+    def getDateInfo(self, args):
         thisyear = datetime.date.today().strftime("%Y")
         targetDate = datetime.datetime.strptime(thisyear + args.season_start, "%Y%m%d")
         dateEnd = datetime.datetime.strptime(thisyear + args.season_end, "%Y%m%d")
