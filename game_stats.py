@@ -81,6 +81,7 @@ try:
     while targetDate <= dateEnd:
         # 指定日の[日程・結果]画面へ遷移
         driver.get(getConfig("scheduleUrl").replace("[date]", targetDate.strftime("%Y-%m-%d")))
+        util = Util(driver)
         commonWait()
 
         gameNos = []
