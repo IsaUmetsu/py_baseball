@@ -2,8 +2,8 @@ import time
 import re
 from config import getLeague2021, isTokyoOlympicsPeriod
 
-def commonWait():
-    time.sleep(2)
+def commonWait(waittime = 2):
+    time.sleep(waittime)
 
 def getGameNos(util, targetDate):
     gameNos = []

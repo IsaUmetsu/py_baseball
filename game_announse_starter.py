@@ -28,15 +28,19 @@ try:
     while targetDate <= dateEnd:
         # 指定日の[日程・結果]画面へ遷移
         driver.get(getConfig("scheduleUrl").replace("[date]", targetDate.strftime("%Y-%m-%d")))
+        util = Util(driver)
         commonWait()
 
         gameNos = []
         try:
             gameNos = getGameNos(util, targetDate)
         except KeyError:
-            print ("not exist gameNo, date: {0}".format(targetDate.strftime("%m%d")))
+            print ("-----not exist gameNo, date: {0} -----".format(targetDate.strftime("%m%d")))
             targetDate = targetDate + datetime.timedelta(days=1)
             continue
+
+        if len(gameNos) == 0:
+            print ("-----not exist games, date: {0} -----".format(targetDate.strftime("%Y/%m/%d")))
 
         for idx, gameNoStr in enumerate(gameNos):
             # 日付ディレクトリ作成
