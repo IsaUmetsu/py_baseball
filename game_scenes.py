@@ -24,15 +24,22 @@ driver = getFirefoxDriver()
 util = Util(driver)
 args = util.parseArgs()
 targetDate, dateEnd = util.getDateInfo(args)
+gameKindIds = util.getGameKindIds(args.game_kind)
 
 print("----- current time: {0} -----".format(datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S")))
 
 try:
     while targetDate <= dateEnd:
         # 指定日の[日程・結果]画面へ遷移
-        driver.get(getConfig("scheduleUrl").replace("[date]", targetDate.strftime("%Y-%m-%d")))
+        driver.get(getConfig("scheduleUrl").replace("[date]", targetDate.strftime("%Y-%m-%d")).replace("[gameKindIds]", gameKindIds))
         util = Util(driver)
         commonWait()
+
+        nextDayButton = driver.find_element_by_css_selector(getSelector("nextDayButton"))
+        nextDayButtonClass = nextDayButton.get_attribute("class")
+        isNextDayButtonDisable = False
+        if 'bb-head01__naviItem--unlink' in nextDayButtonClass.split():
+            isNextDayButtonDisable = True
 
         gameNos = []
         try:
@@ -388,7 +395,11 @@ try:
                     time.time() - startTime
                 ))
 
-        targetDate = targetDate + datetime.timedelta(days=1)
+        if isNextDayButtonDisable:
+            break
+        else:
+            targetDate = targetDate + datetime.timedelta(days=1)
+
         util = Util(driver)
 
     driver.close()

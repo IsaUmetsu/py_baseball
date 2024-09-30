@@ -1,6 +1,6 @@
 def getConfig(key):
     config = {
-        "scheduleUrl": "https://baseball.yahoo.co.jp/npb/schedule/?date=[date]",
+        "scheduleUrl": "https://baseball.yahoo.co.jp/npb/schedule/?date=[date]&gameKindIds=[gameKindIds]",
         "gameScoreUrl": "https://baseball.yahoo.co.jp/npb/game/[dateGameNo]/score",
         "gameTopUrl": "https://baseball.yahoo.co.jp/npb/game/[dateGameNo]/top",
         "gameStatsUrl": "https://baseball.yahoo.co.jp/npb/game/[dateGameNo]/stats",
@@ -48,7 +48,9 @@ def getTeamInitialByFullName(team):
         "埼玉西武ライオンズ": "L",
         "オリックス・バファローズ": "B",
         "千葉ロッテマリーンズ": "M",
-        "北海道日本ハムファイターズ": "F"
+        "北海道日本ハムファイターズ": "F",
+        "オールセリーグ": "AC",
+        "オールパリーグ": "AP"
     }
     return teamInitial[team]
 

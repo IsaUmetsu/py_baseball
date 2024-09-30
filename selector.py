@@ -4,6 +4,7 @@ selectorList = {
     "gameCards": "#gm_card .bb-score__content",
     "gameCardsHomeTeam": ".bb-score__team p:nth-child(1)",
     "gameCardsAwayTeam": ".bb-score__team p:nth-child(2)",
+    "nextDayButton": "#day_nav .bb-head01__naviItem--following", # 次の日 ボタン
 
     ### トップ
     "gameState": "#gm_brd .bb-gameDetail .bb-gameTeam__score .bb-gameCard__state", # from 2023
